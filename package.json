@@ -1,0 +1,31 @@
+{
+  "name": "management",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sssirsa/management.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sssirsa/management/issues"
+  },
+  "homepage": "https://github.com/sssirsa/management#readme",
+  "devDependencies": {
+    "serverless-domain-manager": "^3.3.1",
+    "serverless-offline": "^5.12.1",
+    "serverless-webpack": "^5.3.1",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "dependencies": {
+    "dotenv-webpack": "^1.7.0",
+    "mongoose": "^5.8.10",
+    "webpack": "^4.41.5"
+  }
+}

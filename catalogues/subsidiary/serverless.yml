@@ -1,0 +1,55 @@
+service: management-catalogues-subsidiaries
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 512MB
+  timeout: 10
+  role:
+    Fn::ImportValue: management-dev-IamRoleLambdaExecution
+  apiGateway:
+    restApiId:
+      Fn::ImportValue: management-dev-RestApiId
+    restApiRootResourceId:
+      Fn::ImportValue: management-dev-RootResourceId
+# serverless-webpack configuration
+# Enable auto-packing of external modules
+custom:
+  webpack:
+    includeModules: 
+       packagePath: '../../package.json' # enable auto-packing of external modules
+plugins:
+  - serverless-offline #adding the plugin to be able to run offline emulation
+  - serverless-webpack   
+package:
+  include:
+  - ../../../node_modules
+functions:
+  subsidiary-create:
+    handler: SubsidiaryHandler.create
+    events:
+      - http:
+          path: subsidiary/
+          method: post
+          cors: true
+  subsidiary-getAll:
+    handler: SubsidiaryHandler.getAll
+    events:
+      - http:
+          path: subsidiary/
+          method: get
+          cors: true
+  subsidiary-getOne:
+    handler: SubsidiaryHandler.getOne
+    events:
+      - http:
+          path: subsidiary/{id}
+          method: get
+          cors: true
+  subsidiary-Update:
+    handler: SubsidiaryHandler.update
+    events:
+      - http:
+          path: subsidiary/{id}
+          method: put
+          cors: true

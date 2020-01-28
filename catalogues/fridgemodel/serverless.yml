@@ -1,0 +1,55 @@
+service: management-catalogues-fridgemodels
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 512MB
+  timeout: 10
+  role:
+    Fn::ImportValue: management-dev-IamRoleLambdaExecution
+  apiGateway:
+    restApiId:
+      Fn::ImportValue: management-dev-RestApiId
+    restApiRootResourceId:
+      Fn::ImportValue: management-dev-RootResourceId
+# serverless-webpack configuration
+# Enable auto-packing of external modules
+custom:
+  webpack:
+    includeModules: 
+       packagePath: '../../package.json' # enable auto-packing of external modules
+plugins:
+  - serverless-offline #adding the plugin to be able to run offline emulation
+  - serverless-webpack   
+package:
+  include:
+  - ../../../node_modules
+functions:
+  fridgemodel-create:
+    handler: FridgemodelHandler.create
+    events:
+      - http:
+          path: fridgemodel/
+          method: post
+          cors: true  
+  fridgemodel-getAll:
+    handler: FridgemodelHandler.getAll
+    events:
+      - http:
+          path: fridgemodel/ 
+          method: get
+          cors: true
+  fridgemodel-getOne:
+    handler: FridgemodelHandler.getOne
+    events:
+      - http:
+          path: fridgemodel/{id} 
+          method: get
+          cors: true          
+  fridgemodel-Update:
+    handler: FridgemodelHandler.update        
+    events:
+      - http:
+          path: fridgemodel/{id} 
+          method: put
+          cors: true  

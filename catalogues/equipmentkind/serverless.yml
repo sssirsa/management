@@ -1,0 +1,55 @@
+service: management-catalogues-equipmentkinds
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 512MB
+  timeout: 10
+  role:
+    Fn::ImportValue: management-dev-IamRoleLambdaExecution
+  apiGateway:
+    restApiId:
+      Fn::ImportValue: management-dev-RestApiId
+    restApiRootResourceId:
+      Fn::ImportValue: management-dev-RootResourceId
+# serverless-webpack configuration
+# Enable auto-packing of external modules
+custom:
+  webpack:
+    includeModules: 
+       packagePath: '../../package.json' # enable auto-packing of external modules
+plugins:
+  - serverless-offline #adding the plugin to be able to run offline emulation
+  - serverless-webpack 
+package:
+  include:
+  - ../../../node_modules
+functions:
+  equipmentkind-create:
+    handler: EquipmentkindHandler.create
+    events:
+      - http:
+          path: equipmentkind/
+          method: post
+          cors: true
+  equipmentkind-getAll:
+    handler: EquipmentkindHandler.getAll
+    events:
+      - http:
+          path: equipmentkind/ 
+          method: get
+          cors: true
+  equipmentkind-getOne:
+    handler: EquipmentkindHandler.getOne
+    events:
+      - http:
+          path: equipmentkind/{id} 
+          method: get
+          cors: true         
+  equipmentkind-Update:
+    handler: EquipmentkindHandler.update        
+    events:
+      - http:
+          path: equipmentkind/{id} 
+          method: put
+          cors: true          
