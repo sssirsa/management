@@ -62,7 +62,7 @@ resources:
         RoleName: 
           Fn::Join: 
             - ""
-            - [ "management", "dev", "us-east-1", "lambdaRole" ]
+            - [ "management", "${opt:stage,'dev'}", "${opt:region,'us-east-1'}", "lambdaRole" ]
         Policies:
           - PolicyName: "${opt:stage,'dev'}-management-lambda"
             PolicyDocument:
