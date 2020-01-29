@@ -3,11 +3,10 @@ service: management
 provider:
   name: aws
   runtime: nodejs12.x
-  stage: dev
-  region: us-east-1
+  stage: ${opt:stage,'dev'}
+  region: ${opt:region,'us-east-1'}
 
-  # The following two statements will need to be added if you are 
-  # not declaring any http event handler in the base Stack
+  # The following two statements will need to be added if you are not declaring any http event handler in the base Stack
   iamRoleStatements:
     -
       Effect: "Allow"
@@ -34,17 +33,14 @@ provider:
       Action: \["sns:Publish"\]
       Resource:
         Fn::GetAtt: MySNSTopic.Arn          
-          
-plugins:
-  - serverless-domain-manager
-
-custom:
-  customDomain:
-    domainName: 'phoenix-soul-dev.sssirsa.org'
-    basePath: 'management'          #This will be prefixed to all routes
-    stage: dev
-    createRoute53Record: true
-
+#plugins:
+#  - serverless-domain-manager
+#custom:
+#  customDomain:
+#    domainName: 'phoenix-soul.sssirsa.org'
+#    basePath: 'management'          #This will be prefixed to all routes
+#    stage: dev
+#    createRoute53Record: true
 resources:
   Resources:
     # The IAM Role is not automatically generated unless you specify
@@ -68,7 +64,7 @@ resources:
             - ""
             - [ "management", "dev", "us-east-1", "lambdaRole" ]
         Policies:
-          - PolicyName: "dev-management-lambda"
+          - PolicyName: "${opt:stage,'dev'}-management-lambda"
             PolicyDocument:
               Version: "2012-10-17"
               Statement:
@@ -103,16 +99,16 @@ resources:
       Value:
         Ref: ApiGatewayRestApi
       Export:
-        Name: management-dev-RestApiId
+        Name: management-${opt:stage,'dev'}-RestApiId
     # RestApi Root Resource (the implicit '/' path)
     RootResourceId:
       Value:
         !GetAtt ApiGatewayRestApi.RootResourceId
       Export:
-        Name: management-dev-RootResourceId  
+        Name: management-${opt:stage,'dev'}-RootResourceId  
     # The IAM Role for Lambda execution
     IamRoleLambdaExecution:
       Value: !GetAtt IAMRoleLambdaExecution.Arn 
       Export:
-        Name: management-dev-IamRoleLambdaExecution
+        Name: management-${opt:stage,'dev'}-IamRoleLambdaExecution
     # Path Resources
