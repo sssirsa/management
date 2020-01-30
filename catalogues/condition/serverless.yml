@@ -1,0 +1,55 @@
+service: management-catalogues-condition
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 512MB
+  timeout: 10
+  role:
+    Fn::ImportValue: management-${opt:stage,'dev'}-IamRoleLambdaExecution
+  apiGateway:
+    restApiId:
+      Fn::ImportValue: management-${opt:stage,'dev'}-RestApiId
+    restApiRootResourceId:
+      Fn::ImportValue: management-${opt:stage,'dev'}-RootResourceId
+# serverless-webpack configuration
+# Enable auto-packing of external modules
+custom:
+  webpack:
+    includeModules: 
+       packagePath: '../../package.json' # enable auto-packing of external modules
+plugins:
+  - serverless-offline #adding the plugin to be able to run offline emulation
+  - serverless-webpack   
+package:
+  include:
+  - ../../../node_modules
+functions:
+  condition-create:
+    handler: ConditionHandler.create
+    events:
+      - http:
+          path: condition/
+          method: post
+          cors: true
+  condition-getAll:
+    handler: ConditionHandler.getAll
+    events:
+      - http:
+          path: condition/
+          cors: true
+          method: get 
+  condition-getOne:
+    handler: ConditionHandler.getOne
+    events:
+      - http:
+          path: condition/{id}
+          method: get
+          cors: true
+  condition-Update:
+    handler: ConditionHandler.update
+    events:
+      - http:
+          path: condition/{id}
+          method: put
+          cors: true

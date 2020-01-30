@@ -1,0 +1,55 @@
+service: management-catalogues-restrictionreason
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 512MB
+  timeout: 10
+  role:
+    Fn::ImportValue: management-${opt:stage,'dev'}-IamRoleLambdaExecution
+  apiGateway:
+    restApiId:
+      Fn::ImportValue: management-${opt:stage,'dev'}-RestApiId
+    restApiRootResourceId:
+      Fn::ImportValue: management-${opt:stage,'dev'}-RootResourceId
+# serverless-webpack configuration
+# Enable auto-packing of external modules
+custom:
+  webpack:
+    includeModules: 
+       packagePath: '../../package.json' # enable auto-packing of external modules
+plugins:
+  - serverless-offline #adding the plugin to be able to run offline emulation
+  - serverless-webpack   
+package:
+  include:
+  - ../../../node_modules
+functions:
+  restrictionr-create:
+    handler: RestrictionReasonHandler.create
+    events:
+      - http:
+          path: restrictionreason/
+          method: post
+          cors: true  
+  restrictionr-getAll:
+    handler: RestrictionReasonHandler.getAll
+    events:
+      - http:
+          path: restrictionreason/ 
+          method: get
+          cors: true
+  restrictionr-getOne:
+    handler: RestrictionReasonHandler.getOne
+    events:
+      - http:
+          path: restrictionreason/{id} 
+          method: get
+          cors: true           
+  restrictionr-Update:
+    handler: RestrictionReasonHandler.update        
+    events:
+      - http:
+          path: restrictionreason/{id} 
+          method: put
+          cors: true       
