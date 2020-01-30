@@ -9,7 +9,7 @@ module.exports = {
   entry: slsw.lib.entries,
   plugins: [
     new Dotenv({
-      path:  '../../variables.env.{ENV}'
+      path:  '../../variables.env'
     })
   ],
   externals: [nodeExternals({
