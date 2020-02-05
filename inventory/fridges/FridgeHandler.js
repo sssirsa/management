@@ -68,18 +68,6 @@ module.exports.getOne = (event, context) => {
 function getOne(FridgeId) {
     return Fridge
         .find({ "economico": FridgeId })
-        .populate({
-            path: 'modelo',
-            populate: [{
-                path: 'tipo',
-                model: 'Equipmentkind'
-            }, {
-                path: 'marca',
-                model: 'FridgeBrand'
-            }]
-        })
-        .populate({ path: 'condicion' })
-        .populate({ path: 'estatus_unilever' })
         .then(fridge =>
             !fridge
                 ? Promise.rejected('IN-003')
