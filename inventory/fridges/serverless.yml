@@ -46,3 +46,14 @@ functions:
           path: fridge/{id} 
           method: put
           cors: true 
+  fridge-bysubsidiary:
+    handler: FridgeHandler.bysubsidiary
+    events:
+      - http:
+          path: fridge/by_subsidiary/{id} 
+          method: get
+          cors: true 
+          request:
+            template:
+              application/json: '{  "attribute" : "$input.params(''attribute'')"  }'
+        
