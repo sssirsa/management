@@ -17,15 +17,19 @@ provider:
 custom:
   webpack:
     includeModules: 
-       packagePath: '../../package.json' # enable auto-packing of external modules
+      # enable auto-packing of external modules
+      packagePath: '../../package.json' 
 plugins:
-  - serverless-offline #adding the plugin to be able to run offline emulation
+  #adding the plugin to be able to run offline emulation  
+  - serverless-offline 
   - serverless-webpack   
+  - serverless-plugin-warmup
 package:
   include:
-  - ../../../node_modules
+  - /../../node_modules
 functions:
   unknown-create:
+    warmup: true
     handler: UnknownHandler.create
     events:
       - http:
@@ -33,6 +37,7 @@ functions:
           method: post
           cors: true  
   unknown-getAll:
+    warmup: true
     handler: UnknownHandler.getAll
     events:
       - http:
@@ -40,6 +45,7 @@ functions:
           method: get
           cors: true
   unknown-getOne:
+    warmup: true
     handler: UnknownHandler.getOne
     events:
       - http:
@@ -47,6 +53,7 @@ functions:
           method: get
           cors: true            
   unknown-Update:
+    warmup: true
     handler: UnknownHandler.update        
     events:
       - http:

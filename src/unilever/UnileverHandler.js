@@ -1,7 +1,7 @@
 'use strict';
 
 const connectToDatabase = require('../../db');
-const Unilever = require('./Unilever');
+const Unilever = require('../../models/Unilever');
 
 //#region Create
 
@@ -33,7 +33,7 @@ function checkIfInputIsValid(eventBody) {
 function create(eventBody) {
   return checkIfInputIsValid(eventBody)             // Test validations
     .then(() =>
-      Unilever.findOne({ code: eventBody.code })      //check if unilever status exists
+      Unilever.findOne({ code: eventBody.code }).lean()      //check if unilever status exists
     )
     .then(nombre =>
       nombre
@@ -99,7 +99,7 @@ module.exports.getAll = (event, context) => {
 };
 
 function getAll() {
-  return Unilever.find()                                    // Check if any agency exists
+  return Unilever.find().lean()                                    // Check if any agency exists
     .then(unilever =>
       !unilever
         ? Promise.reject('MG-017')                          // Return if not exists any unilever status
@@ -131,7 +131,7 @@ module.exports.update = (event, context) => {
 };
 
 function update(eventBody, UnileverStatusId) {
-  return Unilever.findByIdAndUpdate(UnileverStatusId, eventBody, { new: true })   // Check if Unilever Status exists
+  return Unilever.findByIdAndUpdate(UnileverStatusId, eventBody, { new: true }).lean()   // Check if Unilever Status exists
     .then(unilever =>
       !unilever
         ? Promise.rejected('MG-016')  // Return error if Unilever Status not Exists

@@ -1,7 +1,7 @@
 'use strict';
 
 const connectToDatabase = require('../../db');
-const FridgeBrand = require('./FridgeBrand');
+const FridgeBrand = require('../../models/FridgeBrand');
 
 //#region Create
 
@@ -33,7 +33,7 @@ function checkIfInputIsValid(eventBody) {
 function create(eventBody) {
   return checkIfInputIsValid(eventBody)
     .then(() =>
-      FridgeBrand.findOne({ nombre: eventBody.nombre }) //check if FridgeBrand exists
+      FridgeBrand.findOne({ nombre: eventBody.nombre }).lean() //check if FridgeBrand exists
     )
     .then(nombre =>
       nombre
@@ -66,7 +66,7 @@ module.exports.getOne = (event, context) => {
 };
 
 function getOne(FridgeBrandId) {
-  return FridgeBrand.findById(FridgeBrandId)                 // Check if fridgebrand exists
+  return FridgeBrand.findById(FridgeBrandId).lean()                 // Check if fridgebrand exists
     .then(fridgebrand =>
       !fridgebrand
         ? Promise.rejected('MG-026')                         // Return error If fridgebrand not Exists
@@ -99,7 +99,7 @@ module.exports.getAll = (event, context) => {
 };
 
 function getAll() {
-  return FridgeBrand.find()                                   // Check if any fridgebrands exists
+  return FridgeBrand.find().lean()                                   // Check if any fridgebrands exists
     .then(fridgebrand =>
       !fridgebrand
         ? Promise.reject('MG-027')                            // Return if not exists any fridgebrand
@@ -132,7 +132,7 @@ module.exports.update = (event, context) => {
 };
 
 function update(eventBody, FridgeBrandId) {
-  return FridgeBrand.findByIdAndUpdate(FridgeBrandId, eventBody, { new: true })     // Check if FridgeBrand exists
+  return FridgeBrand.findByIdAndUpdate(FridgeBrandId, eventBody, { new: true }).lean()     // Check if FridgeBrand exists
     .then(fridgebrand =>
       !fridgebrand
         ? Promise.rejected('No fridgebrand found.')       //Return error if FridgeBrands not Exists

@@ -1,7 +1,7 @@
 'use strict';
 
 const connectToDatabase = require('../../db');
-const RestrictionReason = require('./RestrictionReason');
+const RestrictionReason = require('../../models/RestrictionReason');
 
 //#region Create
 
@@ -33,7 +33,7 @@ function checkIfInputIsValid(eventBody) {
 function create(eventBody) {
   return checkIfInputIsValid(eventBody)                           // Test validations
     .then(() =>
-      RestrictionReason.findOne({ description: eventBody.description })   //check if RestrictionReason exists
+      RestrictionReason.findOne({ description: eventBody.description }).lean()   //check if RestrictionReason exists
     )
     .then(description =>
       description
@@ -65,7 +65,7 @@ module.exports.getOne = (event, context) => {
 };
 
 function getOne(RestrictionReasonId) {
-  return RestrictionReason.findById(RestrictionReasonId)            // Check if RestrictionReason exists
+  return RestrictionReason.findById(RestrictionReasonId).lean()            // Check if RestrictionReason exists
     .then(restrictionreason =>
       !restrictionreason
         ? Promise.rejected('MG-039')                                 // Return error if RestrictionReason not Exists
@@ -97,7 +97,7 @@ module.exports.getAll = (event, context) => {
 };
 
 function getAll() {
-  return RestrictionReason.find()                         // Check if any Restrictionreason exists
+  return RestrictionReason.find().lean()                         // Check if any Restrictionreason exists
     .then(restrictionreason =>
       !restrictionreason
         ? Promise.reject('MG-040')   // Return if not exists any restrictionreason
@@ -130,7 +130,7 @@ module.exports.update = (event, context) => {
 };
 
 function update(eventBody, RestrictionReasonId) {
-  return RestrictionReason.findByIdAndUpdate(RestrictionReasonId, eventBody, { new: true })     // Check if RestrictionReason exists
+  return RestrictionReason.findByIdAndUpdate(RestrictionReasonId, eventBody, { new: true }).lean()     // Check if RestrictionReason exists
     .then(restrictionreason =>
       !restrictionreason
         ? Promise.rejected('MG-039') // Return error if FridgModel not Exists

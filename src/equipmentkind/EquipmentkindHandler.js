@@ -1,7 +1,7 @@
 'use strict';
 
 const connectToDatabase = require('../../db');
-const Equipmentkind = require('./Equipmentkind');
+const Equipmentkind = require('../../models/Equipmentkind');
 
 //#region Create
 
@@ -33,7 +33,7 @@ function checkIfInputIsValid(eventBody) {
 function create(eventBody) {
   return checkIfInputIsValid(eventBody)                 // Test validations
     .then(() =>
-      Equipmentkind.findOne({ nombre: eventBody.nombre }) //check if Equipmentkind exists
+      Equipmentkind.findOne({ nombre: eventBody.nombre }).lean() //check if Equipmentkind exists
     )
     .then(nombre =>
       nombre
@@ -67,7 +67,7 @@ module.exports.getOne = (event, context) => {
 
 
 function getOne(EquipmentkindId) {
-  return Equipmentkind.findById(EquipmentkindId)          // Check if equipmentkind exists
+  return Equipmentkind.findById(EquipmentkindId).lean()         // Check if equipmentkind exists
     .then(equipmentkind =>
       !equipmentkind
         ? Promise.rejected('MG-023')          // Return error if Equipment not Exists
@@ -100,7 +100,7 @@ module.exports.getAll = (event, context) => {
 };
 
 function getAll() {
-  return Equipmentkind.find()                               // Check if any equipmentkind exists
+  return Equipmentkind.find().lean()                               // Check if any equipmentkind exists
     .then(equipmentkind =>
       !equipmentkind
         ? Promise.reject('MG-024')                            // Return if not exists any equipmentkind
@@ -132,7 +132,7 @@ module.exports.update = (event, context) => {
 };
 
 function update(eventBody, EquipmentkindId) {
-  return Equipmentkind.findByIdAndUpdate(EquipmentkindId, eventBody, { new: true })     // Check if Equipmentkind exists
+  return Equipmentkind.findByIdAndUpdate(EquipmentkindId, eventBody, { new: true }).lean()     // Check if Equipmentkind exists
     .then(equipmentkind =>
       !equipmentkind
         ? Promise.rejected('MG-023')   // Return error if Equipmentkind not Exists

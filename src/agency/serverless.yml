@@ -17,15 +17,19 @@ provider:
 custom:
   webpack:
     includeModules: 
-       packagePath: '../../package.json' # enable auto-packing of external modules
+      # enable auto-packing of external modules
+      packagePath: '../../package.json' 
 plugins:
-  - serverless-offline #adding the plugin to be able to run offline emulation
-  - serverless-webpack      
+  #adding the plugin to be able to run offline emulation
+  - serverless-offline 
+  - serverless-webpack
+  - serverless-plugin-warmup
 package:
   include:
-  - ../../../node_modules
+  - /../../node_modules
 functions:
   agency-create:
+    warmup: true
     handler: AgencyHandler.create
     events:
       - http:
@@ -33,6 +37,7 @@ functions:
           method: post
           cors: true
   agency-getAll:
+    warmup: true
     handler: AgencyHandler.getAll
     events:
       - http:
@@ -40,6 +45,7 @@ functions:
           method: get
           cors: true
   agency-getOne:
+    warmup: true
     handler: AgencyHandler.getOne
     events:
       - http:
@@ -47,6 +53,7 @@ functions:
           method: get
           cors: true                     
   agency-Update:
+    warmup: true
     handler: AgencyHandler.update        
     events:
       - http:

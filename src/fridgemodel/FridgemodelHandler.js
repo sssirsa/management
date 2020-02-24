@@ -1,7 +1,7 @@
 'use strict';
 
 const connectToDatabase = require('../../db');
-const FridgeModel = require('./Fridgemodel');
+const FridgeModel = require('../../models/Fridgemodel');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 

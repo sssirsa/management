@@ -1,7 +1,7 @@
 'use strict';
 
 const connectToDatabase = require('../../db');
-const Agency = require('./Agency');
+const Agency = require('../../models/Agency');
 
 //#region Create
 
@@ -70,7 +70,7 @@ module.exports.getOne = (event, context) => {
 };
 
 function getOne(AgencyId) {
-  return Agency.findById(AgencyId)                      //Check if agency exists
+  return Agency.findById(AgencyId).lean()                      //Check if agency exists
     .then(agency =>
       !agency
         ? Promise.rejected('MG-008')                    // Return error if Agency not Exists
@@ -102,7 +102,7 @@ module.exports.getAll = (event, context) => {
 };
 
 function getAll() {
-  return Agency.find()                                  // Check if any agency exists
+  return Agency.find().lean()                                  // Check if any agency exists
     .then(agency =>
       !agency
         ? Promise.reject('MG-009')                      // Return if not exists any agency
@@ -134,7 +134,7 @@ module.exports.update = (event, context) => {
 };
 
 function update(eventBody, AgencyId) {
-  return Agency.findByIdAndUpdate(AgencyId, eventBody, { new: true })   // Check if Agency exists
+  return Agency.findByIdAndUpdate(AgencyId, eventBody, { new: true }).lean()   // Check if Agency exists
     .then(agency =>
       !agency
         ? Promise.rejected('MG-008') // Return error if Agency not Exists
@@ -144,9 +144,3 @@ function update(eventBody, AgencyId) {
 };
 
 //#endregion
-
-/** Hemos visto sus miradas
- *  Sus ojos en ebullición
- *  El combate esta amañanado
- *  Han comprado el cinturón
- */

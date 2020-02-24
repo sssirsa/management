@@ -1,7 +1,7 @@
 'use strict';
 
 const connectToDatabase = require('../../db');
-const UnknownStatus = require('./UnknownStatus');
+const UnknownStatus = require('../../models/UnknownStatus');
 
 //#region Create
 

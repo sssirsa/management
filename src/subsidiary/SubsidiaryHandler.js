@@ -1,7 +1,7 @@
 'use strict';
 
 const connectToDatabase = require('../../db');
-const Subsidiary = require('./Subsidiary');
+const Subsidiary = require('../../models/Subsidiary');
 
 //#region Create
 
@@ -36,7 +36,7 @@ function checkIfInputIsValid(eventBody) {
 function create(eventBody) {
   return checkIfInputIsValid(eventBody)                   // Test validations
     .then(() =>
-      Subsidiary.findOne({ nombre: eventBody.nombre })    //check if subsidiary exists
+      Subsidiary.findOne({ nombre: eventBody.nombre }).lean()    //check if subsidiary exists
     )
     .then(nombre =>
       nombre
@@ -69,7 +69,7 @@ module.exports.getOne = (event, context) => {
 };
 
 function getOne(SubsidiaryId) {
-  return Subsidiary.findById(SubsidiaryId)              // Check if subsidiary exists
+  return Subsidiary.findById(SubsidiaryId).lean()              // Check if subsidiary exists
     .then(subsidiary =>
       !subsidiary
         ? Promise.rejected('MG-012')      // Return error if Subsidiary not Exists
@@ -101,7 +101,7 @@ module.exports.getAll = (event, context) => {
 };
 
 function getAll() {
-  return Subsidiary.find()                              // Check if any subsidiary exists
+  return Subsidiary.find().lean()                              // Check if any subsidiary exists
     .then(subsidiary =>
       !subsidiary
         ? Promise.reject('MG-013')        // Return if not exists any subsidiary
@@ -134,7 +134,7 @@ module.exports.update = (event, context) => {
 };
 
 function update(eventBody, SubsidiaryId) {
-  return Subsidiary.findByIdAndUpdate(SubsidiaryId, eventBody, { new: true })   // Check if Subsidiary exists
+  return Subsidiary.findByIdAndUpdate(SubsidiaryId, eventBody, { new: true }).lean()   // Check if Subsidiary exists
     .then(subsidiary =>
       !subsidiary
         ? Promise.rejected('MG-012')            // Return error if Subsidiary not Exists

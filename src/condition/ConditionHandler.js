@@ -1,7 +1,7 @@
 'use strict';
 
 const connectToDatabase = require('../../db');
-const Condition = require('./Condition');
+const Condition = require('../../models/Condition');
 
 //#region Create
 
@@ -33,7 +33,7 @@ function checkIfInputIsValid(eventBody) {
 function create(eventBody) {                       // Test vaalidations
     return checkIfInputIsValid(eventBody)
       .then(() =>
-      Condition.findOne({ letra: eventBody.letra }) //check if Condition exists
+      Condition.findOne({ letra: eventBody.letra }).lean() //check if Condition exists
       )
       .then(letra =>
         letra
@@ -66,7 +66,7 @@ module.exports.getOne = (event, context) => {
 };
 
 function getOne(ConditionId){
-   return Condition.findById(ConditionId)               // Check if condition exists
+   return Condition.findById(ConditionId).lean()               // Check if condition exists
      .then(condition =>
        !condition 
          ? Promise.rejected('MG-020')      // Return error if Condition not Exists
@@ -96,7 +96,7 @@ module.exports.getAll = (event, context) => {
 };
 
 function getAll(){
-  return Condition.find()                             //Check if any condition exists
+  return Condition.find().lean()                             //Check if any condition exists
     .then(condition =>
       !condition
         ? Promise.reject('MG-021')                    // Return if not exists any condition
@@ -127,7 +127,7 @@ module.exports.update = (event, context) => {
 };
 
 function update(eventBody, ConditionId){
-  return Condition.findByIdAndUpdate(ConditionId,eventBody,{new:true})  // Check if Condition exists
+  return Condition.findByIdAndUpdate(ConditionId,eventBody,{new:true}).lean()  // Check if Condition exists
     .then(condition =>
       !condition 
         ? Promise.rejected('MG-020')     // Return error if Condition not Exists
@@ -137,8 +137,3 @@ function update(eventBody, ConditionId){
 };
 
 //#endregion
-
-/**
- * La luna carmesi vuelve a brillar esta noche
- * Ten mucho cuidado link
- */

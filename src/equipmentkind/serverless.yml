@@ -16,16 +16,20 @@ provider:
 # Enable auto-packing of external modules
 custom:
   webpack:
-    includeModules: 
-       packagePath: '../../package.json' # enable auto-packing of external modules
+    includeModules:
+      # enable auto-packing of external modules
+      packagePath: '../../package.json' 
 plugins:
-  - serverless-offline #adding the plugin to be able to run offline emulation
+  #adding the plugin to be able to run offline emulation
+  - serverless-offline 
   - serverless-webpack 
+  - serverless-plugin-warmup
 package:
   include:
-  - ../../../node_modules
+  - /../../node_modules
 functions:
   equipmentkind-create:
+    warmup: true
     handler: EquipmentkindHandler.create
     events:
       - http:
@@ -33,6 +37,7 @@ functions:
           method: post
           cors: true
   equipmentkind-getAll:
+    warmup: true
     handler: EquipmentkindHandler.getAll
     events:
       - http:
@@ -40,6 +45,7 @@ functions:
           method: get
           cors: true
   equipmentkind-getOne:
+    warmup: true
     handler: EquipmentkindHandler.getOne
     events:
       - http:
@@ -47,6 +53,7 @@ functions:
           method: get
           cors: true         
   equipmentkind-Update:
+    warmup: true
     handler: EquipmentkindHandler.update        
     events:
       - http:
