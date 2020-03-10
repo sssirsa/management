@@ -30,7 +30,7 @@ package:
 functions:
   condition-create:
     warmup: true
-    handler: ConditionHandler.create
+    handler: CreateHandler.create
     events:
       - http:
           path: condition/
@@ -38,7 +38,7 @@ functions:
           cors: true
   condition-getAll:
     warmup: true
-    handler: ConditionHandler.getAll
+    handler: GetAllHandler.getAll
     events:
       - http:
           path: condition/
@@ -46,7 +46,7 @@ functions:
           method: get 
   condition-getOne:
     warmup: true
-    handler: ConditionHandler.getOne
+    handler: GetOneHandler.getOne
     events:
       - http:
           path: condition/{id}

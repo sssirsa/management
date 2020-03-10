@@ -30,7 +30,7 @@ package:
 functions:
   agency-create:
     warmup: true
-    handler: AgencyHandler.create
+    handler: CreateHandler.create
     events:
       - http:
           path: agency/
@@ -38,7 +38,7 @@ functions:
           cors: true
   agency-getAll:
     warmup: true
-    handler: AgencyHandler.getAll
+    handler: GetAllHandler.getAll
     events:
       - http:
           path: agency/ 
@@ -46,7 +46,7 @@ functions:
           cors: true
   agency-getOne:
     warmup: true
-    handler: AgencyHandler.getOne
+    handler: GetOneHandler.getOne
     events:
       - http:
           path: agency/{id} 
