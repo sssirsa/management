@@ -1,18 +1,26 @@
-'use strict'
+'use strict';
 
 const connectToDatabase = require('../../db');
-const Equipmentkind = require('../../models/Equipmentkind');
+const FridgeBrand = require('../../models/FridgeBrand');
 
-module.exports.getAll = async (event, context) => {
+module.exports.getOne = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
-    try {
+    var FridgeBrandId = event.pathParrameters.id;
+    try{
+        if (!event || !event.pathParameters || !event.pathParameters.id) {
+            return {
+                statusCode: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: 'No se ha introducido ningún id para busqueda'
+            }
+        }
         connectToDatabase()
-        let response = await findEquipmentKind()
+        let response = await findFridgeBrand(FridgeBrandId)
         if (response.length == 0) {
             return {
                 statusCode: 404,
                 headers: { 'Content-Type': 'application/json' },
-                body: ' No hay tipos de equipo en la base de datos'
+                body: 'No se encontro marca con el id especificado'
             }
         }
         else {
@@ -22,30 +30,31 @@ module.exports.getAll = async (event, context) => {
                 body: JSON.stringify(response)
             }
         }
+        
     }
-    catch (error) {
+    catch (error){
         return {
             statusCode: 500,
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type':'application/json'},
             body: error.message
         }
+
     }
 }
 
-async function findEquipmentKind() {
+async function findFridgeBrand(FridgeBrandId) {
     return new Promise(function (resolve, reject) {
-        Equipmentkind.find({},
+        FridgeBrand.findById(FridgeBrandId,
             function (error, docs) {
                 if (error) {
                     reject({
                         statusCode: 500,
                         body: JSON.stringify(error),
                         headers: { 'Content-Type': 'application/json' }
-                    })
+                    });
                 }
                 resolve(docs);
             }
-        ).sort({ 'nombre': 1 });
+        );
     });
 }
-

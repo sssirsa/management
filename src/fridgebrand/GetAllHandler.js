@@ -1,13 +1,13 @@
-'use strict'
+'use strict';
 
 const connectToDatabase = require('../../db');
-const Equipmentkind = require('../../models/Equipmentkind');
+const FridgeBrand = require('../../models/FridgeBrand');
 
 module.exports.getAll = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
     try {
         connectToDatabase()
-        let response = await findEquipmentKind()
+        let response = await findFridgebrand()
         if (response.length == 0) {
             return {
                 statusCode: 404,
@@ -32,9 +32,9 @@ module.exports.getAll = async (event, context) => {
     }
 }
 
-async function findEquipmentKind() {
+async function findFridgebrand() {
     return new Promise(function (resolve, reject) {
-        Equipmentkind.find({},
+        FridgeBrand.find({},
             function (error, docs) {
                 if (error) {
                     reject({
