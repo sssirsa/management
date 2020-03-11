@@ -1,18 +1,19 @@
-'use strict';
+'use strict'
 
 const connectToDatabase = require('../../db');
-const Agency = require('../../models/Agency');
+const Equipmentkind = require('../../models/Equipmentkind');
+
 
 module.exports.getAll = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
     try {
         connectToDatabase()
-        let response = await findAgency()
+        let response = await findEquipmentKind()
         if (response.length == 0) {
             return {
                 statusCode: 404,
                 headers: { 'Content-Type': 'application/json' },
-                body: 'No hay agencias en la base de datos'
+                body: ' No hay tipos de equipo en la base de datos'
             }
         }
         else {
@@ -32,19 +33,20 @@ module.exports.getAll = async (event, context) => {
     }
 }
 
-async function findAgency() {
+async function findEquipmentKind() {
     return new Promise(function (resolve, reject) {
-        Agency.find({},
+        Equipmentkind.find({},
             function (error, docs) {
                 if (error) {
                     reject({
                         statusCode: 500,
                         body: JSON.stringify(error),
                         headers: { 'Content-Type': 'application/json' }
-                    });
+                    })
                 }
                 resolve(docs);
             }
-        ).sort({ 'agencia': 1 });
+        ).sort({ 'code': 1 });
     });
 }
+

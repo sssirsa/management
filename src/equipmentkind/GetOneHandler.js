@@ -1,18 +1,26 @@
 'use strict';
 
 const connectToDatabase = require('../../db');
-const Agency = require('../../models/Agency');
+const EquipmentKind = require('../../models/Equipmentkind');
 
-module.exports.getAll = async (event, context) => {
+module.exports.getOne = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
-    try {
+    var EquipmentkindId = event.pathParrameters.id;
+    try{
+        if (!event || !event.pathParameters || !event.pathParameters.id) {
+            return {
+                statusCode: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: 'No se ha introducido ningún id para busqueda'
+            }
+        }
         connectToDatabase()
-        let response = await findAgency()
+        let response = await findEquipmentkind(EquipmentkindId)
         if (response.length == 0) {
             return {
                 statusCode: 404,
                 headers: { 'Content-Type': 'application/json' },
-                body: 'No hay agencias en la base de datos'
+                body: 'No se encontro tipo equipo con el id especificado'
             }
         }
         else {
@@ -22,19 +30,21 @@ module.exports.getAll = async (event, context) => {
                 body: JSON.stringify(response)
             }
         }
+        
     }
-    catch (error) {
+    catch (error){
         return {
             statusCode: 500,
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type':'application/json'},
             body: error.message
         }
+
     }
 }
 
-async function findAgency() {
+async function findEquipmentkind(EquipmentkindId) {
     return new Promise(function (resolve, reject) {
-        Agency.find({},
+        EquipmentKind.findById(EquipmentkindId,
             function (error, docs) {
                 if (error) {
                     reject({
@@ -45,6 +55,6 @@ async function findAgency() {
                 }
                 resolve(docs);
             }
-        ).sort({ 'agencia': 1 });
+        );
     });
 }
