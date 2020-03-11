@@ -54,7 +54,7 @@ functions:
           cors: true                     
   agency-Update:
     warmup: true
-    handler: AgencyHandler.update        
+    handler: UpdateHandler.update        
     events:
       - http:
           path: agency/{id} 
