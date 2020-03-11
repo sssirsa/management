@@ -27,7 +27,7 @@ module.exports.getOne = async (event, context) => {
             return {
                 statusCode: 200,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(response[0])
+                body: JSON.stringify(response)
             }
         }
         

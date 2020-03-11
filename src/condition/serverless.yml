@@ -54,7 +54,7 @@ functions:
           cors: true
   condition-Update:
     warmup: true
-    handler: ConditionHandler.update
+    handler: UpdateHandler.update
     events:
       - http:
           path: condition/{id}
