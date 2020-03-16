@@ -1,0 +1,62 @@
+service: management-catalogues-unilevers
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 512MB
+  timeout: 10
+  role:
+    Fn::ImportValue: management-${opt:stage,'dev'}-IamRoleLambdaExecution
+  apiGateway:
+    restApiId:
+      Fn::ImportValue: management-${opt:stage,'dev'}-RestApiId
+    restApiRootResourceId:
+      Fn::ImportValue: management-${opt:stage,'dev'}-RootResourceId
+# serverless-webpack configuration
+# Enable auto-packing of external modules
+custom:
+  webpack:
+    includeModules:
+      # enable auto-packing of external modules
+      packagePath: '../../package.json' 
+plugins:
+  #adding the plugin to be able to run offline emulation
+  - serverless-offline 
+  - serverless-webpack
+  - serverless-plugin-warmup
+package:
+  include:
+  - /../../node_modules
+functions:
+  unileverstatus-create:
+    warmup: true
+    handler: UnileverHandler.create
+    events:
+      - http:
+          path: unilever/
+          method: post
+          cors: true
+  unileverstatus-getAll:
+    warmup: true
+    handler: UnileverHandler.getAll
+    events:
+      - http:
+          path: unilever/
+          method: get
+          cors: true
+  unileverstatus-getOne:
+    warmup: true
+    handler: UnileverHandler.getOne
+    events:
+      - http:
+          path: unilever/{id}
+          method: get
+          cors: true
+  unileverstatus-Update:
+    warmup: true
+    handler: UnileverHandler.update
+    events:
+      - http:
+          path: unilever/{id}
+          method: put
+          cors: true
