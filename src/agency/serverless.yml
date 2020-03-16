@@ -24,6 +24,7 @@ plugins:
   - serverless-offline 
   - serverless-webpack
   - serverless-plugin-warmup
+  - serverless-mocha-plugin
 package:
   include:
   - /../../node_modules
