@@ -19,13 +19,17 @@
   "homepage": "https://github.com/sssirsa/management#readme",
   "devDependencies": {
     "serverless-domain-manager": "^3.3.1",
+    "serverless-mocha-plugin": "^1.11.0",
     "serverless-offline": "^5.12.1",
+    "serverless-plugin-warmup": "^4.8.0",
     "serverless-webpack": "^5.3.1",
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
+    "babel-runtime": "^6.26.0",
     "dotenv-webpack": "^1.7.0",
     "mongoose": "^5.8.10",
+    "validator": "^12.2.0",
     "webpack": "^4.41.5"
   }
 }
