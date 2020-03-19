@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/sssirsa/management#readme",
   "devDependencies": {
+    "jest": "^25.1.0",
     "serverless-domain-manager": "^3.3.1",
     "serverless-mocha-plugin": "^1.11.0",
     "serverless-offline": "^5.12.1",
