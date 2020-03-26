@@ -1,11 +1,27 @@
-'use strict';
-
 const connectToDatabase = require('../../db');
 const Agency = require('../../models/Agency');
 
+async function findAgency(Agencyid) {
+    return new Promise(((resolve, reject) => {
+        Agency.findById(Agencyid,
+            (error, docs) => {
+                if (error) {
+                    reject(new Error({
+                        statusCode: 500,
+                        body: JSON.stringify(error),
+                        headers: { 'Content-Type': 'application/json' }
+                    }));
+                }
+                resolve(docs);
+            }
+        );
+    }));
+}
+
 module.exports.getOne = async (event, context) => {
-    context.callbackWaitsForEmptyEventLoop = false;
-    var AgencyId = event.pathParameters.id;
+    const mongoconection = context;
+    mongoconection.callbackWaitsForEmptyEventLoop = false;
+    const AgencyId = event.pathParameters.id;
     try {
         if (!event || !event.pathParameters || !event.pathParameters.id) {
             return {
@@ -15,21 +31,21 @@ module.exports.getOne = async (event, context) => {
             }
         }
         connectToDatabase()
-        let response = await findAgency(AgencyId)
-        if (response.length == 0) {
+        const response = await findAgency(AgencyId)
+        if (response.length === 0) {
             return {
                 statusCode: 404,
                 headers: { 'Content-Type': 'application/json' },
                 body: 'No se encontro agencia con el id especificado'
             }
         }
-        else {
-            return {
-                statusCode: 200,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(response)
-            }
+
+        return {
+            statusCode: 200,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(response)
         }
+
     }
     catch (error) {
         return {
@@ -38,21 +54,4 @@ module.exports.getOne = async (event, context) => {
             body: error.message
         }
     }
-}
-
-async function findAgency(AgencyId) {
-    return new Promise(function (resolve, reject) {
-        Agency.findById(AgencyId,
-            function (error, docs) {
-                if (error) {
-                    reject({
-                        statusCode: 500,
-                        body: JSON.stringify(error),
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                }
-                resolve(docs);
-            }
-        );
-    });
 }

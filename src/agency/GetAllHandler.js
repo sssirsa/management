@@ -1,26 +1,40 @@
-'use strict';
-
 const connectToDatabase = require('../../db');
 const Agency = require('../../models/Agency');
 
+async function findAgency() {
+    return new Promise(((resolve, reject) => {
+        Agency.find({},
+            (error, docs) => {
+                if (error) {
+                    reject(new Error({
+                        statusCode: 500,
+                        body: JSON.stringify(error),
+                        headers: { 'Content-Type': 'application/json' }
+                    }));
+                }
+                resolve(docs);
+            }
+        ).sort({ 'agencia': 1 });
+    }));
+}
+
 module.exports.getAll = async (event, context) => {
-    context.callbackWaitsForEmptyEventLoop = false;
+    const mongoconection = context;
+    mongoconection.callbackWaitsForEmptyEventLoop = false;
     try {
         connectToDatabase()
-        let response = await findAgency()
-        if (response.length == 0) {
+        const response = await findAgency()
+        if (response.length === 0) {
             return {
                 statusCode: 404,
                 headers: { 'Content-Type': 'application/json' },
                 body: 'No hay agencias en la base de datos'
             }
         }
-        else {
-            return {
-                statusCode: 200,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(response)
-            }
+        return {
+            statusCode: 200,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(response)
         }
     }
     catch (error) {
@@ -30,21 +44,4 @@ module.exports.getAll = async (event, context) => {
             body: error.message
         }
     }
-}
-
-async function findAgency() {
-    return new Promise(function (resolve, reject) {
-        Agency.find({},
-            function (error, docs) {
-                if (error) {
-                    reject({
-                        statusCode: 500,
-                        body: JSON.stringify(error),
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                }
-                resolve(docs);
-            }
-        ).sort({ 'agencia': 1 });
-    });
 }
