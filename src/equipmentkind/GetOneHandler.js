@@ -1,12 +1,28 @@
-'use strict';
-
 const connectToDatabase = require('../../db');
-const EquipmentKind = require('../../models/Equipmentkind');
+const EquipmentKind = require('../../models/EquipmentKind');
+
+async function findEquipmentKind(EquipmentKindid) {
+    return new Promise(((resolve, reject) => {
+        EquipmentKind.findById(EquipmentKindid,
+            (error, docs) => {
+                if (error) {
+                    reject(new Error({
+                        statusCode: 500,
+                        body: JSON.stringify(error),
+                        headers: { 'Content-Type': 'application/json' }
+                    }));
+                }
+                resolve(docs);
+            }
+        );
+    }));
+}
 
 module.exports.getOne = async (event, context) => {
-    context.callbackWaitsForEmptyEventLoop = false;
-    var EquipmentkindId = event.pathParrameters.id;
-    try{
+    const mongoconection = context;
+    mongoconection.callbackWaitsForEmptyEventLoop = false;
+    const EquipmentKindId = event.pathParameters.id;
+    try {
         if (!event || !event.pathParameters || !event.pathParameters.id) {
             return {
                 statusCode: 400,
@@ -15,46 +31,27 @@ module.exports.getOne = async (event, context) => {
             }
         }
         connectToDatabase()
-        let response = await findEquipmentkind(EquipmentkindId)
-        if (response.length == 0) {
+        const response = await findEquipmentKind(EquipmentKindId)
+        if (response.length === 0) {
             return {
                 statusCode: 404,
                 headers: { 'Content-Type': 'application/json' },
-                body: 'No se encontro tipo equipo con el id especificado'
+                body: 'No se encontro tipo de equipo con el id especificado'
             }
         }
-        else {
+        
             return {
                 statusCode: 200,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(response)
             }
-        }
         
     }
-    catch (error){
+    catch (error) {
         return {
             statusCode: 500,
-            headers: {'Content-Type':'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: error.message
         }
-
     }
-}
-
-async function findEquipmentkind(EquipmentkindId) {
-    return new Promise(function (resolve, reject) {
-        EquipmentKind.findById(EquipmentkindId,
-            function (error, docs) {
-                if (error) {
-                    reject({
-                        statusCode: 500,
-                        body: JSON.stringify(error),
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                }
-                resolve(docs);
-            }
-        );
-    });
 }

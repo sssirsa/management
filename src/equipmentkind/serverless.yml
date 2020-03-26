@@ -16,14 +16,18 @@ provider:
 # Enable auto-packing of external modules
 custom:
   webpack:
-    includeModules:
-      # enable auto-packing of external modules
+   #Name of webpack configuration file
+    webpackConfig: '../../webpack.config.js'    
+  # Node modules configuration for packaging
+    includeModules: 
+  # enable auto-packing of external modules
       packagePath: '../../package.json' 
 plugins:
   #adding the plugin to be able to run offline emulation
   - serverless-offline 
-  - serverless-webpack 
+  - serverless-webpack
   - serverless-plugin-warmup
+  - serverless-mocha-plugin
 package:
   include:
   - /../../node_modules
