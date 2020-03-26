@@ -1,27 +1,41 @@
-'use strict'
-
 const connectToDatabase = require('../../db');
 const Condition = require('../../models/Condition');
 
+async function findCondition() {
+    return new Promise(((resolve, reject) => {
+        Condition.find({},
+            (error, docs) => {
+                if (error) {
+                    reject(new Error({
+                        statusCode: 500,
+                        body: JSON.stringify(error),
+                        headers: { 'Content-Type': 'application/json' }
+                    }));
+                }
+                resolve(docs);
+            }
+        ).sort({ 'letra': 1 });
+    }));
+}
+
 module.exports.getAll = async (event, context) => {
-    context.callbackWaitsForEmptyEventLoop = false;
+    const mongoconection = context;
+    mongoconection.callbackWaitsForEmptyEventLoop = false;
     try {
         connectToDatabase()
-        let response = await findCondition()
-        if (response.length == 0) {
+        const response = await findCondition()
+        if (response.length === 0) {
             return {
                 statusCode: 404,
                 headers: { 'Content-Type': 'application/json' },
-                body: ' No hay condiciones en la base de datos'
+                body: 'No hay condiciones en la base de datos'
             }
         }
-        else {
             return {
                 statusCode: 200,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(response)
             }
-        }
     }
     catch (error) {
         return {
@@ -30,21 +44,4 @@ module.exports.getAll = async (event, context) => {
             body: error.message
         }
     }
-}
-
-async function findCondition() {
-    return new Promise(function (resolve, reject) {
-        Condition.find({},
-            function (error, docs) {
-                if (error) {
-                    reject({
-                        statusCode: 500,
-                        body: JSON.stringify(error),
-                        headers: { 'Content-Type': 'application/json' }
-                    })
-                }
-                resolve(docs);
-            }
-        ).sort({ 'code': 1 });
-    });
 }
