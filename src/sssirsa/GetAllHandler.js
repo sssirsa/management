@@ -1,27 +1,41 @@
-'use strict';
-
 const connectToDatabase = require('../../db');
 const Sssirsa = require('../../models/Sssirsa');
 
+async function findSssirsa() {
+    return new Promise(((resolve, reject) => {
+        Sssirsa.find({},
+            (error, docs) => {
+                if (error) {
+                    reject(new Error({
+                        statusCode: 500,
+                        body: JSON.stringify(error),
+                        headers: { 'Content-Type': 'application/json' }
+                    }));
+                }
+                resolve(docs);
+            }
+        ).sort({ 'code': 1 });
+    }));
+}
+
 module.exports.getAll = async (event, context) => {
-    context.callbackWaitsForEmptyEventLoop = false;
+    const mongoconection = context;
+    mongoconection.callbackWaitsForEmptyEventLoop = false;
     try {
         connectToDatabase()
-        let response = await findStatus()
-        if (response.length == 0) {
+        const response = await findSssirsa()
+        if (response.length === 0) {
             return {
                 statusCode: 404,
                 headers: { 'Content-Type': 'application/json' },
-                body: 'No hay estatus sssirsa en la base de datos'
+                body: 'No hay estados sssirsa en la base de datos'
             }
         }
-        else {
             return {
                 statusCode: 200,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(response)
             }
-        }
     }
     catch (error) {
         return {
@@ -30,21 +44,4 @@ module.exports.getAll = async (event, context) => {
             body: error.message
         }
     }
-}
-
-async function findStatus(){
-    return new Promise(function (resolve, reject){
-        Sssirsa.find({},
-            function(error, docs){
-                if(error){
-                    reject({
-                        statusCode: 500,
-                        body: JSON.stringify(error),
-                        headers: { 'Content-Type':'application/json'}
-                    });
-                }
-                resolve(docs);
-            }
-        ).sort({ 'code': 1});
-    });
 }

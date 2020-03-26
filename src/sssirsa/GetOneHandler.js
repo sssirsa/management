@@ -1,43 +1,51 @@
-'use strict';
-
 const connectToDatabase = require('../../db');
 const Sssirsa = require('../../models/Sssirsa');
-const validator = require('validator');
+
+async function findSssirsa(Sssirsaid) {
+    return new Promise(((resolve, reject) => {
+        Sssirsa.findById(Sssirsaid,
+            (error, docs) => {
+                if (error) {
+                    reject(new Error({
+                        statusCode: 500,
+                        body: JSON.stringify(error),
+                        headers: { 'Content-Type': 'application/json' }
+                    }));
+                }
+                resolve(docs);
+            }
+        );
+    }));
+}
 
 module.exports.getOne = async (event, context) => {
-    context.callbackWaitsForEmptyEventLoop = false;
-    var StatusId = event.pathParameters.id;
+    const mongoconection = context;
+    mongoconection.callbackWaitsForEmptyEventLoop = false;
+    const SssirsaId = event.pathParameters.id;
     try {
         if (!event || !event.pathParameters || !event.pathParameters.id) {
             return {
                 statusCode: 400,
                 headers: { 'Content-Type': 'application/json' },
-                body: 'No se ha indroducido ningún id para busqueda'
+                body: 'No se ha introducido ningún id para busqueda'
             }
         }
-        else if (!validator.isNumeric(event.pathParameters.id)) {
-            return {
-                statusCode: 404,
-                headers: { 'Content-Type': 'application/json' },
-                body: "El id introducido no es un valor numerico valido"
-            };
-        }
         connectToDatabase()
-        let response = await findStatus(StatusId)
-        if (response.length == 0) {
+        const response = await findSssirsa(SssirsaId)
+        if (response.length === 0) {
             return {
                 statusCode: 404,
                 headers: { 'Content-Type': 'application/json' },
                 body: 'No se encontro estatus sssirsa con el id especificado'
             }
         }
-        else {
+        
             return {
                 statusCode: 200,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(response[0])
+                body: JSON.stringify(response)
             }
-        }
+        
     }
     catch (error) {
         return {
@@ -46,21 +54,4 @@ module.exports.getOne = async (event, context) => {
             body: error.message
         }
     }
-}
-
-async function findStatus(StatusId){
-    return new Promise(function (resolve, reject){
-        Sssirsa.find({ "code": StatusId },
-            function(error, docs){
-                if (error){
-                    reject({
-                        statusCode: 500,
-                        body: JSON.stringify(error),
-                        headers: { 'Content-Type':'application/json'}
-                    });
-                }
-                resolve(docs);
-            }
-        );
-    });
 }
