@@ -16,21 +16,25 @@ provider:
 # Enable auto-packing of external modules
 custom:
   webpack:
-    includeModules:
-      # enable auto-packing of external modules
+   #Name of webpack configuration file
+    webpackConfig: '../../webpack.config.js'    
+  # Node modules configuration for packaging
+    includeModules: 
+  # enable auto-packing of external modules
       packagePath: '../../package.json' 
 plugins:
   #adding the plugin to be able to run offline emulation
   - serverless-offline 
   - serverless-webpack
   - serverless-plugin-warmup
+  - serverless-mocha-plugin
 package:
   include:
   - /../../node_modules
 functions:
   unileverstatus-create:
     warmup: true
-    handler: UnileverHandler.create
+    handler: CreateHandler.create
     events:
       - http:
           path: unilever/
@@ -38,7 +42,7 @@ functions:
           cors: true
   unileverstatus-getAll:
     warmup: true
-    handler: UnileverHandler.getAll
+    handler: GetAllHandler.getAll
     events:
       - http:
           path: unilever/
@@ -46,17 +50,9 @@ functions:
           cors: true
   unileverstatus-getOne:
     warmup: true
-    handler: UnileverHandler.getOne
+    handler: GetOneHandler.getOne
     events:
       - http:
           path: unilever/{id}
           method: get
-          cors: true
-  unileverstatus-Update:
-    warmup: true
-    handler: UnileverHandler.update
-    events:
-      - http:
-          path: unilever/{id}
-          method: put
           cors: true
