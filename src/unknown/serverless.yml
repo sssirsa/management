@@ -4,7 +4,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   memorySize: 512MB
-  timeout: 10
+  timeout: 20
   role:
     Fn::ImportValue: management-${opt:stage,'dev'}-IamRoleLambdaExecution
   apiGateway:
@@ -16,21 +16,25 @@ provider:
 # Enable auto-packing of external modules
 custom:
   webpack:
+   #Name of webpack configuration file
+    webpackConfig: '../../webpack.config.js'    
+  # Node modules configuration for packaging
     includeModules: 
-      # enable auto-packing of external modules
+  # enable auto-packing of external modules
       packagePath: '../../package.json' 
 plugins:
-  #adding the plugin to be able to run offline emulation  
+  #adding the plugin to be able to run offline emulation
   - serverless-offline 
-  - serverless-webpack   
+  - serverless-webpack
   - serverless-plugin-warmup
+  - serverless-mocha-plugin
 package:
   include:
   - /../../node_modules
 functions:
   unknown-create:
     warmup: true
-    handler: UnknownHandler.create
+    handler: CreateHandler.create
     events:
       - http:
           path: unknown/
@@ -38,7 +42,7 @@ functions:
           cors: true  
   unknown-getAll:
     warmup: true
-    handler: UnknownHandler.getAll
+    handler: GetAllHandler.getAll
     events:
       - http:
           path: unknown/ 
@@ -46,17 +50,9 @@ functions:
           cors: true
   unknown-getOne:
     warmup: true
-    handler: UnknownHandler.getOne
+    handler: GetOneHandler.getOne
     events:
       - http:
           path: unknown/{id} 
           method: get
-          cors: true            
-  unknown-Update:
-    warmup: true
-    handler: UnknownHandler.update        
-    events:
-      - http:
-          path: unknown/{id} 
-          method: put
-          cors: true  
+          cors: true       
