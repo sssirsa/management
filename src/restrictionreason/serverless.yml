@@ -16,21 +16,25 @@ provider:
 # Enable auto-packing of external modules
 custom:
   webpack:
-    includeModules:
-      # enable auto-packing of external modules
+   #Name of webpack configuration file
+    webpackConfig: '../../webpack.config.js'    
+  # Node modules configuration for packaging
+    includeModules: 
+  # enable auto-packing of external modules
       packagePath: '../../package.json' 
 plugins:
   #adding the plugin to be able to run offline emulation
   - serverless-offline 
   - serverless-webpack
-  - serverless-plugin-warmup   
+  - serverless-plugin-warmup
+  - serverless-mocha-plugin 
 package:
   include:
   - /../../node_modules
 functions:
   restrictionr-create:
     warmup: true
-    handler: RestrictionReasonHandler.create
+    handler: CreateHandler.create
     events:
       - http:
           path: restrictionreason/
@@ -38,7 +42,7 @@ functions:
           cors: true  
   restrictionr-getAll:
     warmup: true
-    handler: RestrictionReasonHandler.getAll
+    handler: GetAllHandler.getAll
     events:
       - http:
           path: restrictionreason/ 
@@ -46,17 +50,9 @@ functions:
           cors: true
   restrictionr-getOne:
     warmup: true
-    handler: RestrictionReasonHandler.getOne
+    handler: GetOneHandler.getOne
     events:
       - http:
           path: restrictionreason/{id} 
           method: get
-          cors: true           
-  restrictionr-Update:
-    warmup: true
-    handler: RestrictionReasonHandler.update        
-    events:
-      - http:
-          path: restrictionreason/{id} 
-          method: put
-          cors: true       
+          cors: true 
