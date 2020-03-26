@@ -5,4 +5,4 @@ const SssirsaSchema = new mongoose.Schema({
     description: String,
 });
 
-module.exports = mongoose.model('Sssirsa',SssirsaSchema);
+module.exports = mongoose.model('Sssirsa', SssirsaSchema);
