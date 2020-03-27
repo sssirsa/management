@@ -1,32 +1,54 @@
-'use strict'
+const connectToDatabase = require('../../db')
+const Condition = require('../../models/Condition')
 
-const connectToDatabase = require('../../db');
-const Condition = require('../../models/Condition');
+async function updateCondition (condition, Conditionid) {
+  return new Promise((resolve, reject) => {
+    Condition.findByIdAndUpdate(Conditionid, condition, { new: true },
+      (error, docs) => {
+        if (error) {
+          reject(new Error({
+            statusCode: 500,
+            body: JSON.stringify(error),
+            headers: { 'Content-Type': 'application/json' }
+          }))
+        }
+        resolve(docs)
+      }).lean()
+  })
+}
 
-module.exports.update = (event, context) => {
-    context.callbackWaitsForEmptyEventLoop = false;
-    return connectToDatabase()
-       .then(() =>
-           update(JSON.parse(event.body),
-           event.pathParameters.id)             // Call the update function 
-       )
-       .then(session => ({                      // Return when update the Condition
-           statusCode: 200,
-           body: JSON.stringify(session)
-       }))
-       .catch(err => ({                        // Return when find some error
-           statusCode: err.statusCode || 500,
-           headers: { 'Content-Type': 'text/plain'},
-           body: {stack: err.stack, message: err.message}
-       }));
-  };
-  
-  function update(eventBody, ConditionId){
-    return Condition.findByIdAndUpdate(ConditionId,eventBody,{new:true}).lean()  // Check if Condition exists
-      .then(condition =>
-        !condition 
-          ? Promise.rejected('MG-020')     // Return error if Condition not Exists
-          : condition                                   // Return Updated Condition
-        )
-        .catch(err => Promise.reject(new Error(err)));
-  };
+module.exports.update = async (event, context) => {
+  const mongoconection = context
+  mongoconection.callbackWaitsForEmptyEventLoop = false
+  const ShapeId = event.pathParameters.id
+  const Shape = JSON.parse(event.body)
+  try {
+    if (!event || !event.pathParameters || !event.pathParameters.id) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'No se ha introducido ningún id para busqueda'
+      }
+    }
+    connectToDatabase()
+    const response = await updateCondition(Shape, ShapeId)
+    if (response.length === 0) {
+      return {
+        statusCode: 404,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'No se encontro condicion con el id especificado'
+      }
+    }
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(response)
+    }
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
+      body: error.message
+    }
+  }
+}

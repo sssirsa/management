@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const RestrictionReasonSchema = new mongoose.Schema({
-    description: String,
-});
+  description: String
+})
 
-module.exports = mongoose.model('RestrictionReason', RestrictionReasonSchema);
+module.exports = mongoose.model('RestrictionReason', RestrictionReasonSchema)

@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const SssirsaSchema = new mongoose.Schema({
-    code: String,
-    description: String,
-});
+  code: String,
+  description: String
+})
 
-module.exports = mongoose.model('Sssirsa', SssirsaSchema);
+module.exports = mongoose.model('Sssirsa', SssirsaSchema)

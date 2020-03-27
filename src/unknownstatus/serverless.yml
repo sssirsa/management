@@ -56,3 +56,19 @@ functions:
           path: unknownstatus/{id} 
           method: get
           cors: true
+  unknownstatus-Update:
+    warmup: true
+    handler: UpdateHandler.update
+    events:
+      - http:
+          path: unknownstatus/{id}
+          method: put
+          cors: true
+  unknownstatus-Delete:
+    warmup: true
+    handler: DeleteHandler.delete
+    events:
+      - http:
+          path: unknownstatus/{id}
+          method: delete
+          cors: true          

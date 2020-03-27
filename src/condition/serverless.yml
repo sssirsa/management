@@ -61,3 +61,11 @@ functions:
           path: condition/{id}
           method: put
           cors: true
+  condition-Delete:
+    warmup: true
+    handler: DeleteHandler.delete
+    events:
+      - http:
+          path: condition/{id}
+          method: delete
+          cors: true

@@ -1,9 +1,9 @@
 const connectToDatabase = require('../../db')
-const EquipmentKind = require('../../models/EquipmentKind')
+const UnknownStatus = require('../../models/UnknownStatus')
 
-async function findEquipmentKind () {
+async function updateUnknownStatus (unknownstatus, UnknownStatusid) {
   return new Promise((resolve, reject) => {
-    EquipmentKind.find({},
+    UnknownStatus.findByIdAndUpdate(UnknownStatusid, unknownstatus, { new: true },
       (error, docs) => {
         if (error) {
           reject(new Error({
@@ -13,22 +13,30 @@ async function findEquipmentKind () {
           }))
         }
         resolve(docs)
-      }
-    ).sort({ nombre: 1 })
+      }).lean()
   })
 }
 
-module.exports.getAll = async (event, context) => {
+module.exports.update = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
+  const ShapeId = event.pathParameters.id
+  const Shape = JSON.parse(event.body)
   try {
+    if (!event || !event.pathParameters || !event.pathParameters.id) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'No se ha introducido ningún id para busqueda'
+      }
+    }
     connectToDatabase()
-    const response = await findEquipmentKind()
+    const response = await updateUnknownStatus(Shape, ShapeId)
     if (response.length === 0) {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No hay tipos de equipo en la base de datos'
+        body: 'No se encontro estatus no capitalizado con el id especificado'
       }
     }
     return {

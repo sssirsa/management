@@ -56,3 +56,19 @@ functions:
           path: restrictionreason/{id} 
           method: get
           cors: true 
+  restrictionr-Update:
+    warmup: true
+    handler: UpdateHandler.update        
+    events:
+      - http:
+          path: restrictionreason/{id} 
+          method: put
+          cors: true         
+  restrictionr-Delete:
+    warmup: true
+    handler: DeleteHandler.delete
+    events:
+      - http:
+          path: restrictionreason/{id}
+          method: delete
+          cors: true          

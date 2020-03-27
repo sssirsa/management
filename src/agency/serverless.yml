@@ -64,3 +64,11 @@ functions:
           path: agency/{id} 
           method: put
           cors: true         
+  agency-Delete:
+    warmup: true
+    handler: DeleteHandler.delete
+    events:
+      - http:
+          path: agency/{id}
+          method: delete
+          cors: true

@@ -56,3 +56,19 @@ functions:
           path: subsidiary/{id}
           method: get
           cors: true
+  subsidiary-Update:
+    warmup: true
+    handler: UpdateHandler.update        
+    events:
+      - http:
+          path: subsidiary/{id} 
+          method: put
+          cors: true         
+  subsidiary-Delete:
+    warmup: true
+    handler: DeleteHandler.delete
+    events:
+      - http:
+          path: subsidiary/{id}
+          method: delete
+          cors: true

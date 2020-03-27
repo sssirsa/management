@@ -1,9 +1,9 @@
 const connectToDatabase = require('../../db')
 const EquipmentKind = require('../../models/EquipmentKind')
 
-async function findEquipmentKind () {
+async function removeEquipmentKind (EquipmentKindid) {
   return new Promise((resolve, reject) => {
-    EquipmentKind.find({},
+    EquipmentKind.findByIdAndDelete(EquipmentKindid,
       (error, docs) => {
         if (error) {
           reject(new Error({
@@ -14,21 +14,29 @@ async function findEquipmentKind () {
         }
         resolve(docs)
       }
-    ).sort({ nombre: 1 })
+    )
   })
 }
 
-module.exports.getAll = async (event, context) => {
+module.exports.delete = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
+  const Shapeid = event.pathParameters.id
   try {
+    if (!event || !event.pathParameters || !event.pathParameters.id) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'No se ha introducido ningún id para busqueda'
+      }
+    }
     connectToDatabase()
-    const response = await findEquipmentKind()
+    const response = await removeEquipmentKind(Shapeid)
     if (response.length === 0) {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No hay tipos de equipo en la base de datos'
+        body: 'No se encontro tipo de equipo con el id especificado'
       }
     }
     return {

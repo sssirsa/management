@@ -63,4 +63,12 @@ functions:
       - http:
           path: equipmentkind/{id} 
           method: put
-          cors: true          
+          cors: true       
+  equipmentkind-Delete:
+    warmup: true
+    handler: DeleteHandler.delete
+    events:
+      - http:
+          path: equipmentkind/{id} 
+          method: delete
+          cors: true    
