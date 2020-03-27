@@ -1,9 +1,8 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
-const EquipmentkindSchema = new mongoose.Schema({
-    nombre: String,
-    descripcion: String,
-    deleted: {type: Boolean, default: false}
-});
+const EquipmentKindSchema = new mongoose.Schema({
+  nombre: String,
+  descripcion: String
+})
 
-module.exports = mongoose.model('Equipmentkind', EquipmentkindSchema);
+module.exports = mongoose.model('EquipmentKind', EquipmentKindSchema)

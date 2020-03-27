@@ -1,49 +1,47 @@
-'use strict';
+const connectToDatabase = require('../../db')
+const EquipmentKind = require('../../models/EquipmentKind')
 
-const connectToDatabase = require('../../db');
-const Equipmentkind = require('../../models/Equipmentkind');
-
-module.exports.create = async (event, context) => {
-    context.callbackWaitsForEmptyEventLoop = false;
-    var Shape = JSON.parse(event.body);
-
-    try{
-        if(!Shape.nombre)
-        return{
-            statusCode: 400,
-            headers: {'Content-Type':'application/json'},
-            body: 'Required field nombre'
-        };
-        connectToDatabase()
-        let response = await createEquipmentkind(Shape);
-        return {
-            statusCode: 201,
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify(response)
-        }
-    }
-    catch (error){
-        return {
+async function createEquipmentKind (equipmentkind) {
+  return new Promise((resolve, reject) => {
+    EquipmentKind.create(equipmentkind,
+      (error, docs) => {
+        if (error) {
+          reject(new Error({
             statusCode: 500,
-            headers: {'Content-Type':'application/json' },
-            body: error.message
+            body: JSON.stringify(error),
+            headers: { 'Content-Type': 'application/json' }
+          }))
         }
-    }
+        resolve(docs)
+      }
+    )
+  })
 }
 
-async function createEquipmentkind(Unilever_Equipmentkind) {
-    return new Promise(function (resolve, reject) {
-        Equipmentkind.create(Unilever_Equipmentkind,
-            function (error, docs) {
-                if (error) {
-                    PromiseRejectionEvent({
-                        statusCode: 500,
-                        body: JSON.stringify(error),
-                        headers: { 'Content-Type': 'application/json' }
-                    })
-                }
-                resolve(docs);
-            }
-        );
-    });
+module.exports.create = async (event, context) => {
+  const mongoconection = context
+  mongoconection.callbackWaitsForEmptyEventLoop = false
+  const Shape = JSON.parse(event.body)
+  try {
+    if (!Shape.nombre) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'Required fields: nombre'
+      }
+    }
+    connectToDatabase()
+    const response = await createEquipmentKind(Shape)
+    return {
+      statusCode: 201,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(response)
+    }
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
+      body: error.message
+    }
+  }
 }

@@ -1,9 +1,8 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const FridgeBrandSchema = new mongoose.Schema({
-    nombre: String,
-    descripcion: String,
-    deleted: {type: Boolean, default: false}
-});
+  nombre: String,
+  descripcion: String
+})
 
-module.exports = mongoose.model('FridgeBrand', FridgeBrandSchema);
+module.exports = mongoose.model('FridgeBrand', FridgeBrandSchema)

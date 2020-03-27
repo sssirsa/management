@@ -4,7 +4,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   memorySize: 512MB
-  timeout: 10
+  timeout: 20
   role:
     Fn::ImportValue: management-${opt:stage,'dev'}-IamRoleLambdaExecution
   apiGateway:
@@ -13,17 +13,21 @@ provider:
     restApiRootResourceId:
       Fn::ImportValue: management-${opt:stage,'dev'}-RootResourceId
 # serverless-webpack configuration
-# Enable auto-packing of external modules 
+# Enable auto-packing of external modules
 custom:
   webpack:
-    includeModules:
-      # enable auto-packing of external modules
+   #Name of webpack configuration file
+    webpackConfig: '../../webpack.config.js'    
+  # Node modules configuration for packaging
+    includeModules: 
+  # enable auto-packing of external modules
       packagePath: '../../package.json' 
 plugins:
   #adding the plugin to be able to run offline emulation
   - serverless-offline 
   - serverless-webpack
   - serverless-plugin-warmup
+  - serverless-mocha-plugin
 package:
   include:
   - /../../node_modules
@@ -60,3 +64,11 @@ functions:
           path: sssirsa/{id}
           method: put
           cors: true        
+  sssirsastatus-Delete:
+    warmup: true
+    handler: DeleteHandler.delete
+    events:
+      - http:
+          path: sssirsa/{id}
+          method: delete
+          cors: true          
