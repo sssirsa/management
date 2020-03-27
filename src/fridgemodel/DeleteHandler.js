@@ -1,9 +1,9 @@
 const connectToDatabase = require('../../db')
-const Unilever = require('../../models/Unilever')
+const Fridgemodel = require('../../models/FridgeModel')
 
-async function findUnilever (Unileverid) {
+async function removeFridgemodel (Fridgemodelid) {
   return new Promise((resolve, reject) => {
-    Unilever.findById(Unileverid,
+    Fridgemodel.findByIdAndDelete(Fridgemodelid,
       (error, docs) => {
         if (error) {
           reject(new Error({
@@ -18,10 +18,10 @@ async function findUnilever (Unileverid) {
   })
 }
 
-module.exports.getOne = async (event, context) => {
+module.exports.delete = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
-  const UnileverId = event.pathParameters.id
+  const Shapeid = event.pathParameters.id
   try {
     if (!event || !event.pathParameters || !event.pathParameters.id) {
       return {
@@ -31,12 +31,12 @@ module.exports.getOne = async (event, context) => {
       }
     }
     connectToDatabase()
-    const response = await findUnilever(UnileverId)
-    if (!response || response.length === 0) {
+    const response = await removeFridgemodel(Shapeid)
+    if (response.length === 0) {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se encontro estatus unilever con el id especificado'
+        body: 'No se encontro modelo con el id especificado'
       }
     }
     return {

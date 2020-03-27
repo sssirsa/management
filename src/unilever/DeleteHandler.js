@@ -1,9 +1,9 @@
 const connectToDatabase = require('../../db')
 const Unilever = require('../../models/Unilever')
 
-async function findUnilever (Unileverid) {
+async function removeUnilever (Unileverid) {
   return new Promise((resolve, reject) => {
-    Unilever.findById(Unileverid,
+    Unilever.findByIdAndDelete(Unileverid,
       (error, docs) => {
         if (error) {
           reject(new Error({
@@ -18,10 +18,10 @@ async function findUnilever (Unileverid) {
   })
 }
 
-module.exports.getOne = async (event, context) => {
+module.exports.delete = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
-  const UnileverId = event.pathParameters.id
+  const Shapeid = event.pathParameters.id
   try {
     if (!event || !event.pathParameters || !event.pathParameters.id) {
       return {
@@ -31,8 +31,8 @@ module.exports.getOne = async (event, context) => {
       }
     }
     connectToDatabase()
-    const response = await findUnilever(UnileverId)
-    if (!response || response.length === 0) {
+    const response = await removeUnilever(Shapeid)
+    if (response.length === 0) {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },

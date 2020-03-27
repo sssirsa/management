@@ -48,3 +48,11 @@ functions:
           path: fridgemodel/{id} 
           method: get
           cors: true
+  fridgemodel-Delete:
+    warmup: true
+    handler: DeleteHandler.delete
+    events:
+      - http:
+          path: fridgemodel/{id}
+          method: delete
+          cors: true          

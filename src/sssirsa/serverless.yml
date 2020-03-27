@@ -64,3 +64,11 @@ functions:
           path: sssirsa/{id}
           method: put
           cors: true        
+  sssirsastatus-Delete:
+    warmup: true
+    handler: DeleteHandler.delete
+    events:
+      - http:
+          path: sssirsa/{id}
+          method: delete
+          cors: true          

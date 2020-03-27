@@ -32,7 +32,7 @@ module.exports.getOne = async (event, context) => {
     }
     connectToDatabase()
     const response = await findFridgeModel(FridgeModelId)
-    if (response.length === 0) {
+    if (!response || response.length === 0) {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
