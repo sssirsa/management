@@ -4,7 +4,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   memorySize: 512MB
-  timeout: 10
+  timeout: 20
   role:
     Fn::ImportValue: management-${opt:stage,'dev'}-IamRoleLambdaExecution
   apiGateway:
@@ -16,21 +16,25 @@ provider:
 # Enable auto-packing of external modules
 custom:
   webpack:
-    includeModules:
-      # enable auto-packing of external modules
+   #Name of webpack configuration file
+    webpackConfig: '../../webpack.config.js'    
+  # Node modules configuration for packaging
+    includeModules: 
+  # enable auto-packing of external modules
       packagePath: '../../package.json' 
 plugins:
   #adding the plugin to be able to run offline emulation
   - serverless-offline 
-  - serverless-webpack   
+  - serverless-webpack
   - serverless-plugin-warmup
+  - serverless-mocha-plugin
 package:
   include:
   - /../../node_modules
 functions:
   unknownstatus-create:
     warmup: true
-    handler: UnknownStatusHandler.create
+    handler: CreateHandler.create
     events:
       - http:
           path: unknownstatus/
@@ -38,7 +42,7 @@ functions:
           cors: true  
   unknownstatus-getAll:
     warmup: true
-    handler: UnknownStatusHandler.getAll
+    handler: GetAllHandler.getAll
     events:
       - http:
           path: unknownstatus/ 
@@ -46,17 +50,25 @@ functions:
           cors: true
   unknownstatus-getOne:
     warmup: true
-    handler: UnknownStatusHandler.getOne
+    handler: GetOneHandler.getOne
     events:
       - http:
           path: unknownstatus/{id} 
           method: get
-          cors: true          
+          cors: true
   unknownstatus-Update:
     warmup: true
-    handler: UnknownStatusHandler.update        
+    handler: UpdateHandler.update
     events:
       - http:
-          path: unknownstatus/{id} 
+          path: unknownstatus/{id}
           method: put
-          cors: true 
+          cors: true
+  unknownstatus-Delete:
+    warmup: true
+    handler: DeleteHandler.delete
+    events:
+      - http:
+          path: unknownstatus/{id}
+          method: delete
+          cors: true          

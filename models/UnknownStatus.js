@@ -1,10 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const UnknownStatusSchema = new mongoose.Schema({
-    nombre: String,
-    descripcion: String,
-    accion: String,
-    deleted: {type: Boolean, default: false}
-});
+  nombre: String,
+  descripcion: String,
+  accion: String
+})
 
-module.exports = mongoose.model('UnknownStatus', UnknownStatusSchema);
+module.exports = mongoose.model('UnknownStatus', UnknownStatusSchema)

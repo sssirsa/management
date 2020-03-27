@@ -4,7 +4,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   memorySize: 512MB
-  timeout: 10
+  timeout: 20
   role:
     Fn::ImportValue: management-${opt:stage,'dev'}-IamRoleLambdaExecution
   apiGateway:
@@ -16,29 +16,25 @@ provider:
 # Enable auto-packing of external modules
 custom:
   webpack:
+   #Name of webpack configuration file
+    webpackConfig: '../../webpack.config.js'    
+  # Node modules configuration for packaging
     includeModules: 
-      # enable auto-packing of external modules 
+  # enable auto-packing of external modules
       packagePath: '../../package.json' 
 plugins:
   #adding the plugin to be able to run offline emulation
   - serverless-offline 
   - serverless-webpack
-  - serverless-plugin-warmup   
+  - serverless-plugin-warmup
+  - serverless-mocha-plugin
 package:
   include:
   - /../../node_modules
 functions:
-  fridgemodel-create:
-    warmup: true
-    handler: FridgemodelHandler.create
-    events:
-      - http:
-          path: fridgemodel/
-          method: post
-          cors: true  
   fridgemodel-getAll:
     warmup: true
-    handler: FridgemodelHandler.getAll
+    handler: GetAllHandler.getAll
     events:
       - http:
           path: fridgemodel/ 
@@ -46,17 +42,17 @@ functions:
           cors: true
   fridgemodel-getOne:
     warmup: true
-    handler: FridgemodelHandler.getOne
+    handler: GetOneHandler.getOne
     events:
       - http:
           path: fridgemodel/{id} 
           method: get
-          cors: true          
-  fridgemodel-Update:
+          cors: true
+  fridgemodel-Delete:
     warmup: true
-    handler: FridgemodelHandler.update        
+    handler: DeleteHandler.delete
     events:
       - http:
-          path: fridgemodel/{id} 
-          method: put
-          cors: true  
+          path: fridgemodel/{id}
+          method: delete
+          cors: true          
