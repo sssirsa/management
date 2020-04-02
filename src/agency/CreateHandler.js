@@ -8,8 +8,8 @@ async function createAgency (agency) {
         if (error) {
           reject(new Error({
             statusCode: 500,
-            body: JSON.stringify(error),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
           }))
         }
         resolve(docs)
@@ -23,13 +23,21 @@ module.exports.create = async (event, context) => {
   mongoconection.callbackWaitsForEmptyEventLoop = false
   const Shape = JSON.parse(event.body)
   try {
-    if (!Shape.agencia || !Shape.direccion) {
+    if (!Shape.agencia) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'Required fields: agencia, direccion'
+        body: 'Required fields: agencia'
       }
     }
+    if (!Shape.direccion) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'Required fields: direccion'
+      }
+    }
+
     connectToDatabase()
     const response = await createAgency(Shape)
     return {

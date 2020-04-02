@@ -8,8 +8,8 @@ async function removeAgency (Agencyid) {
         if (error) {
           reject(new Error({
             statusCode: 500,
-            body: JSON.stringify(error),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
           }))
         }
         resolve(docs)
@@ -23,7 +23,7 @@ module.exports.delete = async (event, context) => {
   mongoconection.callbackWaitsForEmptyEventLoop = false
   const Shapeid = event.pathParameters.id
   try {
-    if (!event || !event.pathParameters || !event.pathParameters.id) {
+    if (!Shapeid) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -32,7 +32,7 @@ module.exports.delete = async (event, context) => {
     }
     connectToDatabase()
     const response = await removeAgency(Shapeid)
-    if (response.length === 0) {
+    if (!response || response.length === 0) {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
