@@ -8,8 +8,8 @@ async function createSubsidiary (subsidiary) {
         if (error) {
           reject(new Error({
             statusCode: 500,
-            body: JSON.stringify(error),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
           }))
         }
         resolve(docs)
@@ -23,11 +23,18 @@ module.exports.create = async (event, context) => {
   mongoconnection.callbackWaitsForEmptyEventLoop = false
   const Shape = JSON.parse(event.body)
   try {
-    if (!Shape.nombre || !Shape.direccion) {
+    if (!Shape.nombre) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'Required fields: nombre, direccion'
+        body: 'Required fields: nombre'
+      }
+    }
+    if (!Shape.direccion) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'Required fields: direccion'
       }
     }
     connectToDatabase()

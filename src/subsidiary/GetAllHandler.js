@@ -24,7 +24,7 @@ module.exports.getAll = async (event, context) => {
   try {
     connectToDatabase()
     const response = await findSubsidiary()
-    if (response.length === 0) {
+    if (!response || response.length === 0) {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },

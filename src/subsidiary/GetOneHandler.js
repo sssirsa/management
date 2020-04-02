@@ -8,8 +8,8 @@ async function findSubsidiary (Subsidiaryid) {
         if (error) {
           reject(new Error({
             statusCode: 500,
-            body: JSON.stringify(error),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
           }))
         }
         resolve(docs)
@@ -21,9 +21,9 @@ async function findSubsidiary (Subsidiaryid) {
 module.exports.getOne = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
-  const SubsidiaryId = event.pathParameters.id
+  const ShapeId = event.pathParameters.id
   try {
-    if (!event || !event.pathParameters || !event.pathParameters.id) {
+    if (!ShapeId) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -31,7 +31,7 @@ module.exports.getOne = async (event, context) => {
       }
     }
     connectToDatabase()
-    const response = await findSubsidiary(SubsidiaryId)
+    const response = await findSubsidiary(ShapeId)
     if (!response || response.length === 0) {
       return {
         statusCode: 404,

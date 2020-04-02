@@ -23,7 +23,7 @@ module.exports.update = async (event, context) => {
   const ShapeId = event.pathParameters.id
   const Shape = JSON.parse(event.body)
   try {
-    if (!event || !event.pathParameters || !event.pathParameters.id) {
+    if (!ShapeId) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -32,7 +32,7 @@ module.exports.update = async (event, context) => {
     }
     connectToDatabase()
     const response = await updateSubsidiary(Shape, ShapeId)
-    if (response.length === 0) {
+    if (!response || response.length === 0) {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
