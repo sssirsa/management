@@ -8,8 +8,8 @@ async function createUnknown (unknown) {
         if (error) {
           reject(new Error({
             statusCode: 500,
-            body: JSON.stringify(error),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
           }))
         }
         resolve(docs)
@@ -23,11 +23,18 @@ module.exports.create = async (event, context) => {
   mongoconection.callbackWaitsForEmptyEventLoop = false
   const Shape = JSON.parse(event.body)
   try {
-    if (!Shape.nombre || !Shape.descripcion) {
+    if (!Shape.nombre) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'Required fields: nombre, descripcion'
+        body: 'Required fields: nombre'
+      }
+    }
+    if (!Shape.descripcion) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'Required fields: descripcion'
       }
     }
     connectToDatabase()

@@ -27,7 +27,7 @@ module.exports.update = async (event, context) => {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se ha introducido ningún id para busqueda'
+        body: 'No se ha introducido ningún id para actualización'
       }
     }
     connectToDatabase()

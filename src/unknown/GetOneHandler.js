@@ -8,8 +8,8 @@ async function findUnknown (Unknownid) {
         if (error) {
           reject(new Error({
             statusCode: 500,
-            body: JSON.stringify(error),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
           }))
         }
         resolve(docs)
@@ -21,9 +21,9 @@ async function findUnknown (Unknownid) {
 module.exports.getOne = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
-  const UnknownId = event.pathParameters.id
+  const ShapeId = event.pathParameters.id
   try {
-    if (!event || !event.pathParameters || !event.pathParameters.id) {
+    if (!ShapeId) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -31,7 +31,7 @@ module.exports.getOne = async (event, context) => {
       }
     }
     connectToDatabase()
-    const response = await findUnknown(UnknownId)
+    const response = await findUnknown(ShapeId)
     if (!response || response.length === 0) {
       return {
         statusCode: 404,

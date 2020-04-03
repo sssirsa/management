@@ -8,8 +8,8 @@ async function findUnknown () {
         if (error) {
           reject(new Error({
             statusCode: 500,
-            body: JSON.stringify(error),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
           }))
         }
         resolve(docs)
@@ -24,11 +24,11 @@ module.exports.getAll = async (event, context) => {
   try {
     connectToDatabase()
     const response = await findUnknown()
-    if (response.length === 0) {
+    if (!response || response.length === 0) {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No hay rasones de impedimento en la base de datos'
+        body: 'No hay motivos no capitalizados en la base de datos'
       }
     }
     return {
