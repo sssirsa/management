@@ -8,8 +8,8 @@ async function removeRestrictionReason (RestrictionReasonid) {
         if (error) {
           reject(new Error({
             statusCode: 500,
-            body: JSON.stringify(error),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
           }))
         }
         resolve(docs)
@@ -23,20 +23,20 @@ module.exports.delete = async (event, context) => {
   mongoconection.callbackWaitsForEmptyEventLoop = false
   const Shapeid = event.pathParameters.id
   try {
-    if (!event || !event.pathParameters || !event.pathParameters.id) {
+    if (!Shapeid) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se ha introducido ningún id para busqueda'
+        body: 'No se ha introducido ningún id para eliminación'
       }
     }
     connectToDatabase()
     const response = await removeRestrictionReason(Shapeid)
-    if (response.length === 0) {
+    if (!response || response.length === 0) {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se encontro restriccion con el id especificado'
+        body: 'No se encontro motivo impedimento con el id especificado'
       }
     }
     return {
