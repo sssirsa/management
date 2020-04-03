@@ -8,8 +8,8 @@ async function createUnilever (unilever) {
         if (error) {
           reject(new Error({
             statusCode: 500,
-            body: JSON.stringify(error),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
           }))
         }
         resolve(docs)
@@ -23,11 +23,18 @@ module.exports.create = async (event, context) => {
   mongoconection.callbackWaitsForEmptyEventLoop = false
   const Shape = JSON.parse(event.body)
   try {
-    if (!Shape.code || !Shape.description) {
+    if (!Shape.code) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'Required fields: code, description'
+        body: 'Required fields: code'
+      }
+    }
+    if (!Shape.description) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'Required fields: description'
       }
     }
     connectToDatabase()

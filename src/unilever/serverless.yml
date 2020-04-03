@@ -56,6 +56,14 @@ functions:
           path: unilever/{id}
           method: get
           cors: true
+  unileverstatus-Update:
+    warmup: true
+    handler: UpdateHandler.update        
+    events:
+      - http:
+          path: unilever/{id} 
+          method: put
+          cors: true                   
   unilever-Delete:
     warmup: true
     handler: DeleteHandler.delete
