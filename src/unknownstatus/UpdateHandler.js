@@ -8,8 +8,8 @@ async function updateUnknownStatus (unknownstatus, UnknownStatusid) {
         if (error) {
           reject(new Error({
             statusCode: 500,
-            body: JSON.stringify(error),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
           }))
         }
         resolve(docs)
@@ -23,16 +23,16 @@ module.exports.update = async (event, context) => {
   const ShapeId = event.pathParameters.id
   const Shape = JSON.parse(event.body)
   try {
-    if (!event || !event.pathParameters || !event.pathParameters.id) {
+    if (!ShapeId) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se ha introducido ningún id para busqueda'
+        body: 'No se ha introducido ningún id para actualización'
       }
     }
     connectToDatabase()
     const response = await updateUnknownStatus(Shape, ShapeId)
-    if (response.length === 0) {
+    if (!response || response.length === 0) {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },

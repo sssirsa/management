@@ -8,8 +8,8 @@ async function findUnknownStatus (UnknownStatusid) {
         if (error) {
           reject(new Error({
             statusCode: 500,
-            body: JSON.stringify(error),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
           }))
         }
         resolve(docs)
@@ -21,9 +21,9 @@ async function findUnknownStatus (UnknownStatusid) {
 module.exports.getOne = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
-  const UnknownStatusId = event.pathParameters.id
+  const ShapeId = event.pathParameters.id
   try {
-    if (!event || !event.pathParameters || !event.pathParameters.id) {
+    if (!ShapeId) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -31,12 +31,12 @@ module.exports.getOne = async (event, context) => {
       }
     }
     connectToDatabase()
-    const response = await findUnknownStatus(UnknownStatusId)
+    const response = await findUnknownStatus(ShapeId)
     if (!response || response.length === 0) {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se encontro restriccion con el id especificado'
+        body: 'No se encontro estatus no capitalizado con el id especificado'
       }
     }
     return {
