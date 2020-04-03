@@ -1,5 +1,7 @@
 const connectToDatabase = require('../../db')
 const Condition = require('../../models/Condition')
+const Fridge = require('../../models/Fridge')
+const mongoose = require('mongoose')
 
 async function updateCondition (condition, Conditionid) {
   return new Promise((resolve, reject) => {
@@ -8,12 +10,36 @@ async function updateCondition (condition, Conditionid) {
         if (error) {
           reject(new Error({
             statusCode: 500,
-            body: JSON.stringify(error),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
           }))
         }
         resolve(docs)
       }).lean()
+  })
+}
+
+async function updateConditionInFridge (Newcondition, ConditionId) {
+  return new Promise((resolve, reject) => {
+    Fridge.update(
+      { 'condicion._id': mongoose.Types.ObjectId(ConditionId) },
+      {
+        $set: {
+          condicion: Newcondition
+        }
+      },
+      { multi: true },
+      (error, docs) => {
+        if (error) {
+          reject(new Error({
+            statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
+          }))
+        }
+        resolve(docs)
+      }
+    )
   })
 }
 
@@ -23,26 +49,35 @@ module.exports.update = async (event, context) => {
   const ShapeId = event.pathParameters.id
   const Shape = JSON.parse(event.body)
   try {
-    if (!event || !event.pathParameters || !event.pathParameters.id) {
+    if (!ShapeId) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se ha introducido ningún id para busqueda'
+        body: 'No se ha introducido ningún id para actualización'
       }
     }
     connectToDatabase()
     const response = await updateCondition(Shape, ShapeId)
-    if (response.length === 0) {
+    if (!response || response.length === 0) {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
         body: 'No se encontro condicion con el id especificado'
       }
-    }
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(response)
+    } else {
+      const update = await updateConditionInFridge(response, ShapeId)
+      if (update) {
+        return {
+          statusCode: 200,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(response)
+        }
+      }
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'Se han actualizado la colección de condicion pero no de cabinet'
+      }
     }
   } catch (error) {
     return {

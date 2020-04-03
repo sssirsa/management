@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const ConditionSchema = new mongoose.Schema({
-  description: String,
+  descripcion: String,
   letra: String
 })
 
