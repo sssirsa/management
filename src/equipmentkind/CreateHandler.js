@@ -8,8 +8,8 @@ async function createEquipmentKind (equipmentkind) {
         if (error) {
           reject(new Error({
             statusCode: 500,
-            body: JSON.stringify(error),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
           }))
         }
         resolve(docs)
