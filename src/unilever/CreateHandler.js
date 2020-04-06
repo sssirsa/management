@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const Unilever = require('../../models/Unilever')
+const mongoose = require('mongoose')
+const UnileverSchema = require('../../models/Unilever')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var Unilever = management.model('Unilever', UnileverSchema)
 
 async function createUnilever (unilever) {
   return new Promise((resolve, reject) => {
@@ -37,7 +39,6 @@ module.exports.create = async (event, context) => {
         body: 'Required fields: description'
       }
     }
-    connectToDatabase()
     const response = await createUnilever(Shape)
     return {
       statusCode: 201,

@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const Unilever = require('../../models/Unilever')
+const mongoose = require('mongoose')
+const UnileverSchema = require('../../models/Unilever')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var Unilever = management.model('Unilever', UnileverSchema)
 
 async function removeUnilever (Unileverid) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.delete = async (event, context) => {
         body: 'No se ha introducido ningún id para eliminación'
       }
     }
-    connectToDatabase()
     const response = await removeUnilever(Shapeid)
     if (!response || response.length === 0) {
       return {

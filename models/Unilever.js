@@ -5,4 +5,4 @@ const UnileverSchema = new mongoose.Schema({
   description: String
 })
 
-module.exports = mongoose.model('Unilever', UnileverSchema)
+module.exports = UnileverSchema

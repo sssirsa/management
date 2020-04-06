@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const Unilever = require('../../models/Unilever')
+const mongoose = require('mongoose')
+const UnileverSchema = require('../../models/Unilever')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var Unilever = management.model('Unilever', UnileverSchema)
 
 async function findUnilever (Unileverid) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.getOne = async (event, context) => {
         body: 'No se ha introducido ningún id para busqueda'
       }
     }
-    connectToDatabase()
     const response = await findUnilever(ShapeId)
     if (!response || response.length === 0) {
       return {

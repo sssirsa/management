@@ -1,7 +1,9 @@
-const connectToDatabase = require('../../db')
-const Unilever = require('../../models/Unilever')
-const Fridge = require('../../models/Fridge')
 const mongoose = require('mongoose')
+const UnileverSchema = require('../../models/Unilever')
+const FridgeSchema = require('../../models/Fridge')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var Unilever = management.model('Unilever', UnileverSchema)
+var Fridge = management.model('Fridge', FridgeSchema)
 
 async function updateUnilever (unilever, Unileverid) {
   return new Promise((resolve, reject) => {
@@ -56,7 +58,6 @@ module.exports.update = async (event, context) => {
         body: 'No se ha introducido ningún id para actualización'
       }
     }
-    connectToDatabase()
     const response = await updateUnilever(Shape, ShapeId)
     if (!response || response.length === 0) {
       return {

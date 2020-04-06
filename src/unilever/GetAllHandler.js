@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const Unilever = require('../../models/Unilever')
+const mongoose = require('mongoose')
+const UnileverSchema = require('../../models/Unilever')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var Unilever = management.model('Unilever', UnileverSchema)
 
 async function findUnilever () {
   return new Promise((resolve, reject) => {
@@ -22,7 +24,6 @@ module.exports.getAll = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
   try {
-    connectToDatabase()
     const response = await findUnilever()
     if (!response || response.length === 0) {
       return {
