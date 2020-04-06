@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const UnknownStatus = require('../../models/UnknownStatus')
+const mongoose = require('mongoose')
+const UnknownStatusSchema = require('../../models/UnknownStatus')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var UnknownStatus = management.model('UnknownStatus', UnknownStatusSchema)
 
 async function findUnknownStatus () {
   return new Promise((resolve, reject) => {
@@ -22,7 +24,6 @@ module.exports.getAll = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
   try {
-    connectToDatabase()
     const response = await findUnknownStatus()
     if (!response || response.length === 0) {
       return {

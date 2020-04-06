@@ -6,4 +6,4 @@ const UnknownStatusSchema = new mongoose.Schema({
   accion: String
 })
 
-module.exports = mongoose.model('UnknownStatus', UnknownStatusSchema)
+module.exports = UnknownStatusSchema

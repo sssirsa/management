@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const UnknownStatus = require('../../models/UnknownStatus')
+const mongoose = require('mongoose')
+const UnknownStatusSchema = require('../../models/UnknownStatus')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var UnknownStatus = management.model('UnknownStatus', UnknownStatusSchema)
 
 async function findUnknownStatus (UnknownStatusid) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.getOne = async (event, context) => {
         body: 'No se ha introducido ningún id para busqueda'
       }
     }
-    connectToDatabase()
     const response = await findUnknownStatus(ShapeId)
     if (!response || response.length === 0) {
       return {

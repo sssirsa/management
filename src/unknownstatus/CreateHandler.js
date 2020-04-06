@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const UnknownStatus = require('../../models/UnknownStatus')
+const mongoose = require('mongoose')
+const UnknownStatusSchema = require('../../models/UnknownStatus')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var UnknownStatus = management.model('UnknownStatus', UnknownStatusSchema)
 
 async function createUnknownStatus (unknownstatus) {
   return new Promise((resolve, reject) => {
@@ -37,7 +39,6 @@ module.exports.create = async (event, context) => {
         body: 'Required fields: descripcion'
       }
     }
-    connectToDatabase()
     const response = await createUnknownStatus(Shape)
     return {
       statusCode: 201,
