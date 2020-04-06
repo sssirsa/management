@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const Subsidiary = require('../../models/Subsidiary')
+const mongoose = require('mongoose')
+const SubsidiarySchema = require('../../models/Subsidiary')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var Subsidiary = management.model('Subsidiary', SubsidiarySchema)
 
 async function updateSubsidiary (subsidiary, Subsidiaryid) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.update = async (event, context) => {
         body: 'No se ha introducido ningún id para actualización'
       }
     }
-    connectToDatabase()
     const response = await updateSubsidiary(Shape, ShapeId)
     if (!response || response.length === 0) {
       return {

@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const Subsidiary = require('../../models/Subsidiary')
+const mongoose = require('mongoose')
+const SubsidiarySchema = require('../../models/Subsidiary')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var Subsidiary = management.model('Subsidiary', SubsidiarySchema)
 
 async function removeSubsidiary (Subsidiaryid) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.delete = async (event, context) => {
         body: 'No se ha introducido ningún id para eliminación'
       }
     }
-    connectToDatabase()
     const response = await removeSubsidiary(Shapeid)
     if (!response || response.length === 0) {
       return {

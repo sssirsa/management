@@ -7,4 +7,4 @@ const SubsidiarySchema = new mongoose.Schema({
   responsable: String
 })
 
-module.exports = mongoose.model('Subsidiary', SubsidiarySchema)
+module.exports = SubsidiarySchema
