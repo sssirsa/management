@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const EquipmentKind = require('../../models/EquipmentKind')
+const mongoose = require('mongoose')
+const EquipmentKindSchema = require('../../models/EquipmentKind')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var EquipmentKind = management.model('EquipmentKind', EquipmentKindSchema)
 
 async function createEquipmentKind (equipmentkind) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.create = async (event, context) => {
         body: 'Required fields: nombre'
       }
     }
-    connectToDatabase()
     const response = await createEquipmentKind(Shape)
     return {
       statusCode: 201,

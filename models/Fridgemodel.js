@@ -6,4 +6,4 @@ const FrigeModelSchema = new mongoose.Schema({
   tipo: { type: mongoose.Schema.Types.ObjectId, ref: 'EquipmentKind' }
 })
 
-module.exports = mongoose.model('FridgeModel', FrigeModelSchema)
+module.exports = FrigeModelSchema

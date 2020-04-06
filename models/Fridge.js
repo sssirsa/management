@@ -11,4 +11,4 @@ const FridgeSchema = new mongoose.Schema({
   modelo: mongoose.Schema.Types.Mixed
 })
 
-module.exports = mongoose.model('Fridge', FridgeSchema)
+module.exports = FridgeSchema

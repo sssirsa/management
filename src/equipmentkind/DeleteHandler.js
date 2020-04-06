@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const EquipmentKind = require('../../models/EquipmentKind')
+const mongoose = require('mongoose')
+const EquipmentKindSchema = require('../../models/EquipmentKind')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var EquipmentKind = management.model('EquipmentKind', EquipmentKindSchema)
 
 async function removeEquipmentKind (EquipmentKindid) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.delete = async (event, context) => {
         body: 'No se ha introducido ningún id para eliminación'
       }
     }
-    connectToDatabase()
     const response = await removeEquipmentKind(Shapeid)
     if (!response || response.length === 0) {
       return {

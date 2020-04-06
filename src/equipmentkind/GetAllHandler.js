@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const EquipmentKind = require('../../models/EquipmentKind')
+const mongoose = require('mongoose')
+const EquipmentKindSchema = require('../../models/EquipmentKind')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var EquipmentKind = management.model('EquipmentKind', EquipmentKindSchema)
 
 async function findEquipmentKind () {
   return new Promise((resolve, reject) => {
@@ -22,7 +24,6 @@ module.exports.getAll = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
   try {
-    connectToDatabase()
     const response = await findEquipmentKind()
     if (!response || response.length === 0) {
       return {

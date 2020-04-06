@@ -1,14 +1,22 @@
-const connectToDatabase = require('../../db')
-const connectToDatabaseEntries = require('../../db2')
-const Equipmentkind = require('../../models/EquipmentKind')
-const FridgeModel = require('../../models/FridgeModel')
-const Fridge = require('../../models/Fridge')
 const mongoose = require('mongoose')
-const connection = mongoose.connection
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var entries = mongoose.createConnection(process.env.DB2, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+const EquipmentKindSchema = require('../../models/EquipmentKind')
+const FridgeModelSchema = require('../../models/FridgeModel')
+const FridgeSchema = require('../../models/Fridge')
+const EntrySchema = require('../../models/Entry')
+const DepartureSchema = require('../../models/Departure')
+const ChangeSchema = require('../../models/Change')
+var EquipmentKind = management.model('EquipmentKind', EquipmentKindSchema)
+var FridgeModel = management.model('FridgeModel', FridgeModelSchema)
+var Fridge = management.model('Fridge', FridgeSchema)
+var Entry = entries.model('Entries', EntrySchema, 'Entries')
+var Departure = entries.model('Departures', DepartureSchema, 'Departures')
+var Change = entries.model('Changes', ChangeSchema, 'Changes')
 
 async function updateEK (EquipK, EquipKid) {
   return new Promise((resolve, reject) => {
-    Equipmentkind.findByIdAndUpdate(EquipKid, EquipK, { new: true },
+    EquipmentKind.findByIdAndUpdate(EquipKid, EquipK, { new: true },
       (error, docs) => {
         if (error) {
           reject(new Error({
@@ -71,30 +79,74 @@ async function updateEKInFridge (NewEK, EquipKId) {
 }
 
 async function updateEKInEntry (NewEK, EquipKId) {
-  connectToDatabaseEntries()
   return new Promise((resolve, reject) => {
-    // eslint-disable-next-line handle-callback-err
-    connection.db.collection('Entries', function (err, collection) {
-      collection.update(
-        { 'cabinets.modelo.tipo._id': mongoose.Types.ObjectId(EquipKId) },
-        {
-          $set: {
-            'cabinets.$.modelo.tipo': NewEK
-          }
-        },
-        { multi: true },
-        (error, docs) => {
-          if (error) {
-            reject(new Error({
-              statusCode: 500,
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(error)
-            }))
-          }
-          resolve(docs)
+    Entry.update(
+      { 'cabinets.modelo.tipo._id': mongoose.Types.ObjectId(EquipKId) },
+      {
+        $set: {
+          'cabinets.$.modelo.tipo': NewEK
         }
-      )
-    })
+      },
+      { multi: true },
+      (error, docs) => {
+        if (error) {
+          reject(new Error({
+            statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
+          }))
+        }
+        resolve(docs)
+      }
+    )
+  })
+}
+
+async function updateEKInDeparture (NewEK, EquipKId) {
+  return new Promise((resolve, reject) => {
+    Departure.update(
+      { 'cabinets.modelo.tipo._id': mongoose.Types.ObjectId(EquipKId) },
+      {
+        $set: {
+          'cabinets.$.modelo.tipo': NewEK
+        }
+      },
+      { multi: true },
+      (error, docs) => {
+        if (error) {
+          reject(new Error({
+            statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
+          }))
+        }
+        resolve(docs)
+      }
+    )
+  })
+}
+
+async function updateEKInChange (NewEK, EquipKId) {
+  return new Promise((resolve, reject) => {
+    Change.update(
+      { 'cabinets.modelo.tipo._id': mongoose.Types.ObjectId(EquipKId) },
+      {
+        $set: {
+          'cabinets.$.modelo.tipo': NewEK
+        }
+      },
+      { multi: true },
+      (error, docs) => {
+        if (error) {
+          reject(new Error({
+            statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
+          }))
+        }
+        resolve(docs)
+      }
+    )
   })
 }
 
@@ -111,7 +163,6 @@ module.exports.update = async (event, context) => {
         body: 'No se ha introducido ningún id para actualización'
       }
     }
-    connectToDatabase()
     const response = await updateEK(Shape, ShapeId)
     if (!response || response.length === 0) {
       return {
@@ -142,6 +193,22 @@ module.exports.update = async (event, context) => {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
         body: 'Se han actualizado la colección de tipo de equipo pero no de entradas'
+      }
+    }
+    const updatedeparture = await updateEKInDeparture(response, ShapeId)
+    if (!updatedeparture) {
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'Se han actualizado la colección de tipo de equipo pero no de salidas'
+      }
+    }
+    const updatechange = await updateEKInChange(response, ShapeId)
+    if (!updatechange) {
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'Se han actualizado la colección de tipo de equipo pero no de cambios'
       }
     }
     return {

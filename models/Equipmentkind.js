@@ -5,4 +5,4 @@ const EquipmentKindSchema = new mongoose.Schema({
   descripcion: String
 })
 
-module.exports = mongoose.model('EquipmentKind', EquipmentKindSchema)
+module.exports = EquipmentKindSchema
