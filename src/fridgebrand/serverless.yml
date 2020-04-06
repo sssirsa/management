@@ -56,6 +56,14 @@ functions:
           path: fridgebrand/{id} 
           method: get
           cors: true
+  fridgebrand-Update:
+    warmup: true
+    handler: UpdateHandler.update
+    events:
+      - http:
+          path: fridgebrand/{id}
+          method: put
+          cors: true        
   fridgebrand-Delete:
     warmup: true
     handler: DeleteHandler.delete

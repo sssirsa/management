@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const FridgeBrand = require('../../models/FridgeBrand')
+const mongoose = require('mongoose')
+const FridgeBrandSchema = require('../../models/FridgeBrand')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var FridgeBrand = management.model('FridgeBrand', FridgeBrandSchema)
 
 async function findFridgeBrand (FridgeBrandid) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.getOne = async (event, context) => {
         body: 'No se ha introducido ningún id para busqueda'
       }
     }
-    connectToDatabase()
     const response = await findFridgeBrand(FridgeBrandId)
     if (!response || response.length === 0) {
       return {

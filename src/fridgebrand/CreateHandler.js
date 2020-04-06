@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const FridgeBrand = require('../../models/FridgeBrand')
+const mongoose = require('mongoose')
+const FridgeBrandSchema = require('../../models/FridgeBrand')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var FridgeBrand = management.model('FridgeBrand', FridgeBrandSchema)
 
 async function createFridgeBrand (fridgebrand) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.create = async (event, context) => {
         body: 'Required fields: nombre'
       }
     }
-    connectToDatabase()
     const response = await createFridgeBrand(Shape)
     return {
       statusCode: 201,

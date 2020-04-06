@@ -5,4 +5,4 @@ const FridgeBrandSchema = new mongoose.Schema({
   descripcion: String
 })
 
-module.exports = mongoose.model('FridgeBrand', FridgeBrandSchema)
+module.exports = FridgeBrandSchema
