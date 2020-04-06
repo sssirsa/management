@@ -4,4 +4,4 @@ const RestrictionReasonSchema = new mongoose.Schema({
   description: String
 })
 
-module.exports = mongoose.model('RestrictionReason', RestrictionReasonSchema)
+module.exports = RestrictionReasonSchema

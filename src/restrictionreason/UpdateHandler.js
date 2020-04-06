@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const RestrictionReason = require('../../models/RestrictionReason')
+const mongoose = require('mongoose')
+const RestrictionReasonSchema = require('../../models/RestrictionReason')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var RestrictionReason = management.model('RestrictionReason', RestrictionReasonSchema)
 
 async function updateRestrictionReason (restrictionreason, RestrictionReasonid) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.update = async (event, context) => {
         body: 'No se ha introducido ningún id para actualización'
       }
     }
-    connectToDatabase()
     const response = await updateRestrictionReason(Shape, ShapeId)
     if (!response || response.length === 0) {
       return {

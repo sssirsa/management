@@ -1,9 +1,11 @@
-const connectToDatabase = require('../../db')
-const RestictionReason = require('../../models/RestrictionReason')
+const mongoose = require('mongoose')
+const RestrictionReasonSchema = require('../../models/RestrictionReason')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var RestrictionReason = management.model('RestrictionReason', RestrictionReasonSchema)
 
 async function createRestrictionReason (restrictionreason) {
   return new Promise((resolve, reject) => {
-    RestictionReason.create(restrictionreason,
+    RestrictionReason.create(restrictionreason,
       (error, docs) => {
         if (error) {
           reject(new Error({
@@ -30,7 +32,6 @@ module.exports.create = async (event, context) => {
         body: 'Required fields: description'
       }
     }
-    connectToDatabase()
     const response = await createRestrictionReason(Shape)
     return {
       statusCode: 201,

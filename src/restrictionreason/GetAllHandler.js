@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const RestrictionReason = require('../../models/RestrictionReason')
+const mongoose = require('mongoose')
+const RestrictionReasonSchema = require('../../models/RestrictionReason')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var RestrictionReason = management.model('RestrictionReason', RestrictionReasonSchema)
 
 async function findRestrictionReason () {
   return new Promise((resolve, reject) => {
@@ -22,7 +24,6 @@ module.exports.getAll = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
   try {
-    connectToDatabase()
     const response = await findRestrictionReason()
     if (!response || response.length === 0) {
       return {
