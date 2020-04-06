@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const Agency = require('../../models/Agency')
+const mongoose = require('mongoose')
+const AgencySchema = require('../../models/Agency')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var Agency = management.model('Agency', AgencySchema)
 
 async function createAgency (agency) {
   return new Promise((resolve, reject) => {
@@ -37,8 +39,6 @@ module.exports.create = async (event, context) => {
         body: 'Required fields: direccion'
       }
     }
-
-    connectToDatabase()
     const response = await createAgency(Shape)
     return {
       statusCode: 201,

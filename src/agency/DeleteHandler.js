@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const Agency = require('../../models/Agency')
+const mongoose = require('mongoose')
+const AgencySchema = require('../../models/Agency')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var Agency = management.model('Agency', AgencySchema)
 
 async function removeAgency (Agencyid) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.delete = async (event, context) => {
         body: 'No se ha introducido ningún id para eliminación'
       }
     }
-    connectToDatabase()
     const response = await removeAgency(Shapeid)
     if (!response || response.length === 0) {
       return {

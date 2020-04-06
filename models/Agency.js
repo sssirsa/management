@@ -8,4 +8,4 @@ const AgencySchema = new mongoose.Schema({
   zona: String
 })
 
-module.exports = mongoose.model('Agency', AgencySchema)
+module.exports = AgencySchema

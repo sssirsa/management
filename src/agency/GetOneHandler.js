@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const Agency = require('../../models/Agency')
+const mongoose = require('mongoose')
+const AgencySchema = require('../../models/Agency')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var Agency = management.model('Agency', AgencySchema)
 
 async function findAgency (Agencyid) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.getOne = async (event, context) => {
         body: 'No se ha introducido ningún id para busqueda'
       }
     }
-    connectToDatabase()
     const response = await findAgency(ShapeId)
     if (!response || response.length === 0) {
       return {

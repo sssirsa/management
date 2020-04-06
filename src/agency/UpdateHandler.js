@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const Agency = require('../../models/Agency')
+const mongoose = require('mongoose')
+const AgencySchema = require('../../models/Agency')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var Agency = management.model('Agency', AgencySchema)
 
 async function updateAgency (agency, Agencyid) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.update = async (event, context) => {
         body: 'No se ha introducido ningún id para actualización'
       }
     }
-    connectToDatabase()
     const response = await updateAgency(Shape, ShapeId)
     if (!response || response.length === 0) {
       return {
