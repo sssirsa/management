@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const Condition = require('../../models/Condition')
+const mongoose = require('mongoose')
+const ConditionSchema = require('../../models/Condition')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var Condition = management.model('Condition', ConditionSchema)
 
 async function findCondition (Conditionid) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.getOne = async (event, context) => {
         body: 'No se ha introducido ningún id para busqueda'
       }
     }
-    connectToDatabase()
     const response = await findCondition(ShapeId)
     if (!response || response.length === 0) {
       return {

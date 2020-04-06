@@ -1,5 +1,7 @@
-const connecToDatabase = require('../../db')
-const Condition = require('../../models/Condition')
+const mongoose = require('mongoose')
+const ConditionSchema = require('../../models/Condition')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var Condition = management.model('Condition', ConditionSchema)
 
 async function createCondition (condition) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.create = async (event, context) => {
         body: 'Required fields: letra'
       }
     }
-    connecToDatabase()
     const response = await createCondition(Shape)
     return {
       statusCode: 201,

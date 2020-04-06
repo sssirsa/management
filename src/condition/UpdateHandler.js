@@ -1,7 +1,9 @@
-const connectToDatabase = require('../../db')
-const Condition = require('../../models/Condition')
-const Fridge = require('../../models/Fridge')
 const mongoose = require('mongoose')
+const ConditionSchema = require('../../models/Condition')
+const FridgeSchema = require('../../models/Fridge')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var Condition = management.model('Condition', ConditionSchema)
+var Fridge = management.model('Fridge', FridgeSchema)
 
 async function updateCondition (condition, Conditionid) {
   return new Promise((resolve, reject) => {
@@ -56,7 +58,6 @@ module.exports.update = async (event, context) => {
         body: 'No se ha introducido ningún id para actualización'
       }
     }
-    connectToDatabase()
     const response = await updateCondition(Shape, ShapeId)
     if (!response || response.length === 0) {
       return {

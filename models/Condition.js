@@ -5,4 +5,4 @@ const ConditionSchema = new mongoose.Schema({
   letra: String
 })
 
-module.exports = mongoose.model('Condition', ConditionSchema)
+module.exports = ConditionSchema
