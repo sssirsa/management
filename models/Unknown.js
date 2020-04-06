@@ -5,4 +5,4 @@ const UnknownSchema = new mongoose.Schema({
   descripcion: String
 })
 
-module.exports = mongoose.model('Unknown', UnknownSchema)
+module.exports = UnknownSchema
