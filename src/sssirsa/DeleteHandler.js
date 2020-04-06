@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const Sssirsa = require('../../models/Sssirsa')
+const mongoose = require('mongoose')
+const SssirsaSchema = require('../../models/Sssirsa')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var Sssirsa = management.model('Sssirsa', SssirsaSchema)
 
 async function removeSssirsa (Sssirsaid) {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,6 @@ module.exports.delete = async (event, context) => {
         body: 'No se ha introducido ningún id para busqueda'
       }
     }
-    connectToDatabase()
     const response = await removeSssirsa(Shapeid)
     if (response.length === 0) {
       return {
