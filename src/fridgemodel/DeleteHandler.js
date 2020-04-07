@@ -1,9 +1,11 @@
-const connectToDatabase = require('../../db')
-const Fridgemodel = require('../../models/FridgeModel')
+const mongoose = require('mongoose')
+const FridgeModelSchema = require('../../models/FridgeModel')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var FridgeModel = management.model('FridgeModel', FridgeModelSchema)
 
 async function removeFridgemodel (Fridgemodelid) {
   return new Promise((resolve, reject) => {
-    Fridgemodel.findByIdAndDelete(Fridgemodelid,
+    FridgeModel.findByIdAndDelete(Fridgemodelid,
       (error, docs) => {
         if (error) {
           reject(new Error({
@@ -30,7 +32,6 @@ module.exports.delete = async (event, context) => {
         body: 'No se ha introducido ningún id para busqueda'
       }
     }
-    connectToDatabase()
     const response = await removeFridgemodel(Shapeid)
     if (response.length === 0) {
       return {

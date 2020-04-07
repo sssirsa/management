@@ -32,6 +32,14 @@ package:
   include:
   - /../../node_modules
 functions:
+  fridgemodel-create:
+    warmup: true
+    handler: CreateHandler.create
+    events:
+      - http:
+          path: fridgemodel/
+          method: post
+          cors: true 
   fridgemodel-getAll:
     warmup: true
     handler: GetAllHandler.getAll
@@ -48,6 +56,14 @@ functions:
           path: fridgemodel/{id} 
           method: get
           cors: true
+  fridgemodel-Update:
+    warmup: true
+    handler: UpdateHandler.update
+    events:
+      - http:
+          path: fridgemodel/{id}
+          method: put
+          cors: true        
   fridgemodel-Delete:
     warmup: true
     handler: DeleteHandler.delete

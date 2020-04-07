@@ -1,5 +1,7 @@
-const connectToDatabase = require('../../db')
-const FridgeModel = require('../../models/FridgeModel')
+const mongoose = require('mongoose')
+const FridgeModelSchema = require('../../models/FridgeModel')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+var FridgeModel = management.model('FridgeModel', FridgeModelSchema)
 
 async function findFridgeModel () {
   return new Promise((resolve, reject) => {
@@ -22,7 +24,6 @@ module.exports.getAll = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
   try {
-    connectToDatabase()
     const response = await findFridgeModel()
     if (response.length === 0) {
       return {
