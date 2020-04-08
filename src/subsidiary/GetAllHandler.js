@@ -1,7 +1,4 @@
-const mongoose = require('mongoose')
-const SubsidiarySchema = require('../../models/Subsidiary')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Subsidiary = management.model('Subsidiary', SubsidiarySchema)
+var Subsidiary = require('../../models/Subsidiary')
 
 async function findSubsidiary () {
   return new Promise((resolve, reject) => {
@@ -10,8 +7,8 @@ async function findSubsidiary () {
         if (error) {
           reject(new Error({
             statusCode: 500,
-            body: JSON.stringify(error),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
           }))
         }
         resolve(docs)
@@ -29,7 +26,7 @@ module.exports.getAll = async (event, context) => {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No hay sucursales en la base de datos'
+        body: 'MG-013'
       }
     }
     return {

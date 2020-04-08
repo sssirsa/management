@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
 
 const SubsidiarySchema = new mongoose.Schema({
   nombre: String,
@@ -7,4 +8,4 @@ const SubsidiarySchema = new mongoose.Schema({
   responsable: String
 })
 
-module.exports = SubsidiarySchema
+module.exports = management.model('Subsidiary', SubsidiarySchema)

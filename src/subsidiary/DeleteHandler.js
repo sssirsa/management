@@ -1,7 +1,5 @@
-const mongoose = require('mongoose')
-const SubsidiarySchema = require('../../models/Subsidiary')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Subsidiary = management.model('Subsidiary', SubsidiarySchema)
+var ObjectId = require('mongoose').Types.ObjectId
+var Subsidiary = require('../../models/Subsidiary')
 
 async function removeSubsidiary (Subsidiaryid) {
   return new Promise((resolve, reject) => {
@@ -25,11 +23,12 @@ module.exports.delete = async (event, context) => {
   mongoconection.callbackWaitsForEmptyEventLoop = false
   const Shapeid = event.pathParameters.id
   try {
-    if (!Shapeid) {
+    var ObjectValid = ObjectId.isValid(Shapeid)
+    if (!ObjectValid) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se ha introducido ningún id para eliminación'
+        body: 'MG-010'
       }
     }
     const response = await removeSubsidiary(Shapeid)
@@ -37,7 +36,7 @@ module.exports.delete = async (event, context) => {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se encontro sucursal con el id especificado'
+        body: 'MG-014'
       }
     }
     return {

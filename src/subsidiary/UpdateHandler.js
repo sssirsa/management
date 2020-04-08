@@ -1,7 +1,5 @@
-const mongoose = require('mongoose')
-const SubsidiarySchema = require('../../models/Subsidiary')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Subsidiary = management.model('Subsidiary', SubsidiarySchema)
+var ObjectId = require('mongoose').Types.ObjectId
+var Subsidiary = require('../../models/Subsidiary')
 
 async function updateSubsidiary (subsidiary, Subsidiaryid) {
   return new Promise((resolve, reject) => {
@@ -19,17 +17,43 @@ async function updateSubsidiary (subsidiary, Subsidiaryid) {
   })
 }
 
+async function searchSubsidiary (name) {
+  return new Promise((resolve, reject) => {
+    Subsidiary.find({ nombre: name },
+      (error, docs) => {
+        if (error) {
+          reject(new Error({
+            statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
+          }))
+        }
+        resolve(docs)
+      }
+    ).lean()
+  })
+}
+
 module.exports.update = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
   const ShapeId = event.pathParameters.id
   const Shape = JSON.parse(event.body)
   try {
-    if (!ShapeId) {
+    var ObjectValid = ObjectId.isValid(ShapeId)
+    if (!ObjectValid) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se ha introducido ningún id para actualización'
+        body: 'MG-010'
+      }
+    }
+    const checksubsidiary = await searchSubsidiary(Shape.nombre)
+    if (checksubsidiary[0]) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'MG-012'
       }
     }
     const response = await updateSubsidiary(Shape, ShapeId)
@@ -37,7 +61,7 @@ module.exports.update = async (event, context) => {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se encontro sucursal con el id especificado'
+        body: 'MG-014'
       }
     }
     return {

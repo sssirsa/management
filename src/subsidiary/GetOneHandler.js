@@ -1,7 +1,5 @@
-const mongoose = require('mongoose')
-const SubsidiarySchema = require('../../models/Subsidiary')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Subsidiary = management.model('Subsidiary', SubsidiarySchema)
+var ObjectId = require('mongoose').Types.ObjectId
+var Subsidiary = require('../../models/Subsidiary')
 
 async function findSubsidiary (Subsidiaryid) {
   return new Promise((resolve, reject) => {
@@ -25,11 +23,12 @@ module.exports.getOne = async (event, context) => {
   mongoconection.callbackWaitsForEmptyEventLoop = false
   const ShapeId = event.pathParameters.id
   try {
-    if (!ShapeId) {
+    var ObjectValid = ObjectId.isValid(ShapeId)
+    if (!ObjectValid) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se ha introducido ningún id para busqueda'
+        body: 'MG-010'
       }
     }
     const response = await findSubsidiary(ShapeId)
@@ -37,7 +36,7 @@ module.exports.getOne = async (event, context) => {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se encontro sucursal con el id especificado'
+        body: 'MG-014'
       }
     }
     return {

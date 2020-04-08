@@ -1,7 +1,4 @@
-const mongoose = require('mongoose')
-const SubsidiarySchema = require('../../models/Subsidiary')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Subsidiary = management.model('Subsidiary', SubsidiarySchema)
+var Subsidiary = require('../../models/Subsidiary')
 
 async function createSubsidiary (subsidiary) {
   return new Promise((resolve, reject) => {
@@ -20,6 +17,23 @@ async function createSubsidiary (subsidiary) {
   })
 }
 
+async function searchSubsidiary (name) {
+  return new Promise((resolve, reject) => {
+    Subsidiary.find({ nombre: name },
+      (error, docs) => {
+        if (error) {
+          reject(new Error({
+            statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
+          }))
+        }
+        resolve(docs)
+      }
+    ).lean()
+  })
+}
+
 module.exports.create = async (event, context) => {
   const mongoconnection = context
   mongoconnection.callbackWaitsForEmptyEventLoop = false
@@ -29,14 +43,22 @@ module.exports.create = async (event, context) => {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'Required fields: nombre'
+        body: 'MG-011'
       }
     }
     if (!Shape.direccion) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'Required fields: direccion'
+        body: 'MG-006'
+      }
+    }
+    const checksubsidiary = await searchSubsidiary(Shape.nombre)
+    if (checksubsidiary[0]) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'MG-012'
       }
     }
     const response = await createSubsidiary(Shape)
