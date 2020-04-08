@@ -1,7 +1,4 @@
-const mongoose = require('mongoose')
-const AgencySchema = require('../../models/Agency')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Agency = management.model('Agency', AgencySchema)
+var Agency = require('../../models/Agency')
 
 async function findAgency () {
   return new Promise((resolve, reject) => {
@@ -29,7 +26,7 @@ module.exports.getAll = async (event, context) => {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No hay agencias en la base de datos'
+        body: 'MG-008'
       }
     }
     return {

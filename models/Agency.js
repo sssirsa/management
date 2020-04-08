@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
 
 const AgencySchema = new mongoose.Schema({
   agencia: String,
@@ -8,4 +9,4 @@ const AgencySchema = new mongoose.Schema({
   zona: String
 })
 
-module.exports = AgencySchema
+module.exports = management.model('Agency', AgencySchema)

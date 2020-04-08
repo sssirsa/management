@@ -37,7 +37,7 @@
     "dotenv-webpack": "^1.7.0",
     "hapi": "^18.1.0",
     "mongoose": "^5.9.4",
-    "serverless": "^1.67.0",
+    "serverless": "^1.67.3",
     "validator": "^12.2.0",
     "webpack": "^4.42.0"
   }

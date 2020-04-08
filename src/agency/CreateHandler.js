@@ -1,7 +1,4 @@
-const mongoose = require('mongoose')
-const AgencySchema = require('../../models/Agency')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Agency = management.model('Agency', AgencySchema)
+var Agency = require('../../models/Agency')
 
 async function createAgency (agency) {
   return new Promise((resolve, reject) => {
@@ -20,6 +17,23 @@ async function createAgency (agency) {
   })
 }
 
+async function searchAgency (name) {
+  return new Promise((resolve, reject) => {
+    Agency.find({ agencia: name },
+      (error, docs) => {
+        if (error) {
+          reject(new Error({
+            statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
+          }))
+        }
+        resolve(docs)
+      }
+    ).lean()
+  })
+}
+
 module.exports.create = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
@@ -29,14 +43,22 @@ module.exports.create = async (event, context) => {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'Required fields: agencia'
+        body: 'MG-005'
       }
     }
     if (!Shape.direccion) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'Required fields: direccion'
+        body: 'MG-006'
+      }
+    }
+    const checkagency = await searchAgency(Shape.agencia)
+    if (checkagency[0]) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'MG-007'
       }
     }
     const response = await createAgency(Shape)
