@@ -1,9 +1,6 @@
-const mongoose = require('mongoose')
-const ConditionSchema = require('../../models/Condition')
-const FridgeSchema = require('../../models/Fridge')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Condition = management.model('Condition', ConditionSchema)
-var Fridge = management.model('Fridge', FridgeSchema)
+var ObjectId = require('mongoose').Types.ObjectId
+var Condition = require('../../models/Condition')
+var Fridge = require('../../models/Fridge')
 
 async function updateCondition (condition, Conditionid) {
   return new Promise((resolve, reject) => {
@@ -24,7 +21,7 @@ async function updateCondition (condition, Conditionid) {
 async function updateConditionInFridge (Newcondition, ConditionId) {
   return new Promise((resolve, reject) => {
     Fridge.update(
-      { 'condicion._id': mongoose.Types.ObjectId(ConditionId) },
+      { 'condicion._id': ObjectId(ConditionId) },
       {
         $set: {
           condicion: Newcondition
@@ -45,17 +42,45 @@ async function updateConditionInFridge (Newcondition, ConditionId) {
   })
 }
 
+async function searchCondition (value) {
+  return new Promise((resolve, reject) => {
+    Condition.find({ letra: value },
+      (error, docs) => {
+        if (error) {
+          reject(new Error({
+            statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
+          }))
+        }
+        resolve(docs)
+      }
+    ).lean()
+  })
+}
+
 module.exports.update = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
   const ShapeId = event.pathParameters.id
   const Shape = JSON.parse(event.body)
   try {
-    if (!ShapeId) {
+    var ObjectValid = ObjectId.isValid(ShapeId)
+    if (!ObjectValid) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se ha introducido ningún id para actualización'
+        body: 'MG-010'
+      }
+    }
+    if (Shape.letra) {
+      const checkcondition = await searchCondition(Shape.letra)
+      if (checkcondition[0]) {
+        return {
+          statusCode: 400,
+          headers: { 'Content-Type': 'application/json' },
+          body: 'MG-016'
+        }
       }
     }
     const response = await updateCondition(Shape, ShapeId)
@@ -63,7 +88,7 @@ module.exports.update = async (event, context) => {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se encontro condicion con el id especificado'
+        body: 'MG-018'
       }
     } else {
       const update = await updateConditionInFridge(response, ShapeId)
@@ -77,7 +102,7 @@ module.exports.update = async (event, context) => {
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
-        body: 'Se han actualizado la colección de condicion pero no de cabinet'
+        body: 'MG-019'
       }
     }
   } catch (error) {

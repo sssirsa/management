@@ -48,12 +48,14 @@ module.exports.update = async (event, context) => {
         body: 'MG-010'
       }
     }
-    const checksubsidiary = await searchSubsidiary(Shape.nombre)
-    if (checksubsidiary[0]) {
-      return {
-        statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
-        body: 'MG-012'
+    if (Shape.nombre) {
+      const checksubsidiary = await searchSubsidiary(Shape.nombre)
+      if (checksubsidiary[0]) {
+        return {
+          statusCode: 400,
+          headers: { 'Content-Type': 'application/json' },
+          body: 'MG-012'
+        }
       }
     }
     const response = await updateSubsidiary(Shape, ShapeId)

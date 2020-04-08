@@ -1,7 +1,4 @@
-const mongoose = require('mongoose')
-const ConditionSchema = require('../../models/Condition')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Condition = management.model('Condition', ConditionSchema)
+var Condition = require('../../models/Condition')
 
 async function createCondition (condition) {
   return new Promise((resolve, reject) => {
@@ -20,6 +17,23 @@ async function createCondition (condition) {
   })
 }
 
+async function searchCondition (value) {
+  return new Promise((resolve, reject) => {
+    Condition.find({ letra: value },
+      (error, docs) => {
+        if (error) {
+          reject(new Error({
+            statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
+          }))
+        }
+        resolve(docs)
+      }
+    ).lean()
+  })
+}
+
 module.exports.create = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
@@ -29,7 +43,15 @@ module.exports.create = async (event, context) => {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'Required fields: letra'
+        body: 'MG-015'
+      }
+    }
+    const checkcondition = await searchCondition(Shape.letra)
+    if (checkcondition[0]) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'MG-016'
       }
     }
     const response = await createCondition(Shape)

@@ -48,12 +48,14 @@ module.exports.update = async (event, context) => {
         body: 'MG-010'
       }
     }
-    const checkagency = await searchAgency(Shape.agencia)
-    if (checkagency[0]) {
-      return {
-        statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
-        body: 'MG-007'
+    if (Shape.agencia) {
+      const checkagency = await searchAgency(Shape.agencia)
+      if (checkagency[0]) {
+        return {
+          statusCode: 400,
+          headers: { 'Content-Type': 'application/json' },
+          body: 'MG-007'
+        }
       }
     }
     const response = await updateAgency(Shape, ShapeId)

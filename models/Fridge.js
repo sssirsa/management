@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
 
 const FridgeSchema = new mongoose.Schema({
   economico: String,
@@ -11,4 +12,4 @@ const FridgeSchema = new mongoose.Schema({
   modelo: mongoose.Schema.Types.Mixed
 })
 
-module.exports = FridgeSchema
+module.exports = management.model('Fridge', FridgeSchema)

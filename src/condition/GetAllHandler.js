@@ -1,7 +1,4 @@
-const mongoose = require('mongoose')
-const ConditionSchema = require('../../models/Condition')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Condition = management.model('Condition', ConditionSchema)
+var Condition = require('../../models/Condition')
 
 async function findCondition () {
   return new Promise((resolve, reject) => {
@@ -29,7 +26,7 @@ module.exports.getAll = async (event, context) => {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No hay condiciones en la base de datos'
+        body: 'MG-017'
       }
     }
     return {
