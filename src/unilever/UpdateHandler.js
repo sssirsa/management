@@ -1,9 +1,6 @@
-const mongoose = require('mongoose')
-const UnileverSchema = require('../../models/Unilever')
-const FridgeSchema = require('../../models/Fridge')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Unilever = management.model('Unilever', UnileverSchema)
-var Fridge = management.model('Fridge', FridgeSchema)
+var ObjectId = require('mongoose').Types.ObjectId
+var Unilever = require('../../models/Unilever')
+var Fridge = require('../../models/Fridge')
 
 async function updateUnilever (unilever, Unileverid) {
   return new Promise((resolve, reject) => {
@@ -24,7 +21,7 @@ async function updateUnilever (unilever, Unileverid) {
 async function updateUnileverInFridge (Newunilever, UnileverId) {
   return new Promise((resolve, reject) => {
     Fridge.update(
-      { 'estatus_unilever._id': mongoose.Types.ObjectId(UnileverId) },
+      { 'estatus_unilever._id': ObjectId(UnileverId) },
       {
         $set: {
           estatus_unilever: Newunilever
@@ -45,17 +42,45 @@ async function updateUnileverInFridge (Newunilever, UnileverId) {
   })
 }
 
+async function searchUnilever (value) {
+  return new Promise((resolve, reject) => {
+    Unilever.find({ code: value },
+      (error, docs) => {
+        if (error) {
+          reject(new Error({
+            statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
+          }))
+        }
+        resolve(docs)
+      }
+    ).lean()
+  })
+}
+
 module.exports.update = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
   const ShapeId = event.pathParameters.id
   const Shape = JSON.parse(event.body)
   try {
-    if (!ShapeId) {
+    var ObjectValid = ObjectId.isValid(ShapeId)
+    if (!ObjectValid) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se ha introducido ningún id para actualización'
+        body: 'MG-010'
+      }
+    }
+    if (Shape.code) {
+      const checkunilever = await searchUnilever(Shape.code)
+      if (checkunilever[0]) {
+        return {
+          statusCode: 400,
+          headers: { 'Content-Type': 'application/json' },
+          body: 'MG-022'
+        }
       }
     }
     const response = await updateUnilever(Shape, ShapeId)
@@ -63,7 +88,7 @@ module.exports.update = async (event, context) => {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se encontro estatus unilever con el id especificado'
+        body: 'MG-024'
       }
     } else {
       const update = await updateUnileverInFridge(response, ShapeId)
@@ -77,7 +102,7 @@ module.exports.update = async (event, context) => {
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
-        body: 'Se han actualizado la colección de estatus unilever pero no de cabinet'
+        body: 'MG-025'
       }
     }
   } catch (error) {

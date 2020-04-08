@@ -1,7 +1,4 @@
-const mongoose = require('mongoose')
-const SssirsaSchema = require('../../models/Sssirsa')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Sssirsa = management.model('Sssirsa', SssirsaSchema)
+var Sssirsa = require('../../models/Sssirsa')
 
 async function createSssirsa (sssirsa) {
   return new Promise((resolve, reject) => {
@@ -20,16 +17,48 @@ async function createSssirsa (sssirsa) {
   })
 }
 
+async function searchSssirsa (value) {
+  return new Promise((resolve, reject) => {
+    Sssirsa.find({ code: value },
+      (error, docs) => {
+        if (error) {
+          reject(new Error({
+            statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
+          }))
+        }
+        resolve(docs)
+      }
+    ).lean()
+  })
+}
+
 module.exports.create = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
   const Shape = JSON.parse(event.body)
   try {
-    if (!Shape.code || !Shape.description) {
+    if (!Shape.code) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'Required fields: code, description'
+        body: 'MG-020'
+      }
+    }
+    if (!Shape.description) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'MG-021'
+      }
+    }
+    const checksssirsa = await searchSssirsa(Shape.code)
+    if (checksssirsa[0]) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: 'MG-026'
       }
     }
     const response = await createSssirsa(Shape)

@@ -1,7 +1,5 @@
-const mongoose = require('mongoose')
-const UnileverSchema = require('../../models/Unilever')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Unilever = management.model('Unilever', UnileverSchema)
+var ObjectId = require('mongoose').Types.ObjectId
+var Unilever = require('../../models/Unilever')
 
 async function removeUnilever (Unileverid) {
   return new Promise((resolve, reject) => {
@@ -25,11 +23,12 @@ module.exports.delete = async (event, context) => {
   mongoconection.callbackWaitsForEmptyEventLoop = false
   const Shapeid = event.pathParameters.id
   try {
-    if (!Shapeid) {
+    var ObjectValid = ObjectId.isValid(Shapeid)
+    if (!ObjectValid) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se ha introducido ningún id para eliminación'
+        body: 'MG-010'
       }
     }
     const response = await removeUnilever(Shapeid)
@@ -37,7 +36,7 @@ module.exports.delete = async (event, context) => {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se encontro estatus unilever con el id especificado'
+        body: 'MG-024'
       }
     }
     return {

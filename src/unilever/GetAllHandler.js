@@ -1,7 +1,4 @@
-const mongoose = require('mongoose')
-const UnileverSchema = require('../../models/Unilever')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Unilever = management.model('Unilever', UnileverSchema)
+var Unilever = require('../../models/Unilever')
 
 async function findUnilever () {
   return new Promise((resolve, reject) => {
@@ -29,7 +26,7 @@ module.exports.getAll = async (event, context) => {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No hay estatus unilever en la base de datos'
+        body: 'MG-023'
       }
     }
     return {

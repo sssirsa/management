@@ -1,9 +1,6 @@
-const mongoose = require('mongoose')
-const SssirsaSchema = require('../../models/Sssirsa')
-const FridgeSchema = require('../../models/Fridge')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Sssirsa = management.model('Sssirsa', SssirsaSchema)
-var Fridge = management.model('Fridge', FridgeSchema)
+var ObjectId = require('mongoose').Types.ObjectId
+var Sssirsa = require('../../models/Sssirsa')
+var Fridge = require('../../models/Fridge')
 
 async function updateSssirsa (sssirsa, SssirsaId) {
   return new Promise((resolve, reject) => {
@@ -24,7 +21,7 @@ async function updateSssirsa (sssirsa, SssirsaId) {
 async function updateSssirsaInFridge (Newsssirsa, SssirsaId) {
   return new Promise((resolve, reject) => {
     Fridge.update(
-      { 'estatus_sssirsa._id': mongoose.Types.ObjectId(SssirsaId) },
+      { 'estatus_sssirsa._id': ObjectId(SssirsaId) },
       {
         $set: {
           estatus_sssirsa: Newsssirsa
@@ -45,17 +42,45 @@ async function updateSssirsaInFridge (Newsssirsa, SssirsaId) {
   })
 }
 
+async function searchSssirsa (value) {
+  return new Promise((resolve, reject) => {
+    Sssirsa.find({ code: value },
+      (error, docs) => {
+        if (error) {
+          reject(new Error({
+            statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(error)
+          }))
+        }
+        resolve(docs)
+      }
+    ).lean()
+  })
+}
+
 module.exports.update = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
   const ShapeId = event.pathParameters.id
   const Shape = JSON.parse(event.body)
   try {
-    if (!ShapeId) {
+    var ObjectValid = ObjectId.isValid(ShapeId)
+    if (!ObjectValid) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se ha introducido ningún id para actualización'
+        body: 'MG-010'
+      }
+    }
+    if (Shape.code) {
+      const checkunilever = await searchSssirsa(Shape.code)
+      if (checkunilever[0]) {
+        return {
+          statusCode: 400,
+          headers: { 'Content-Type': 'application/json' },
+          body: 'MG-026'
+        }
       }
     }
     const response = await updateSssirsa(Shape, ShapeId)
@@ -63,7 +88,7 @@ module.exports.update = async (event, context) => {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se encontro estatus sssirsa con el id especificado'
+        body: 'MG-028'
       }
     } else {
       const update = await updateSssirsaInFridge(response, ShapeId)
@@ -77,7 +102,7 @@ module.exports.update = async (event, context) => {
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
-        body: 'Se han actualizado la colección de estatus sssirsa pero no de cabinet'
+        body: 'MG-029'
       }
     }
   } catch (error) {

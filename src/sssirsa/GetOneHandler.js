@@ -1,7 +1,5 @@
-const mongoose = require('mongoose')
-const SssirsaSchema = require('../../models/Sssirsa')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Sssirsa = management.model('Sssirsa', SssirsaSchema)
+var ObjectId = require('mongoose').Types.ObjectId
+var Sssirsa = require('../../models/Sssirsa')
 
 async function findSssirsa (Sssirsaid) {
   return new Promise((resolve, reject) => {
@@ -23,21 +21,22 @@ async function findSssirsa (Sssirsaid) {
 module.exports.getOne = async (event, context) => {
   const mongoconection = context
   mongoconection.callbackWaitsForEmptyEventLoop = false
-  const SssirsaId = event.pathParameters.id
+  const ShapeId = event.pathParameters.id
   try {
-    if (!event || !event.pathParameters || !event.pathParameters.id) {
+    var ObjectValid = ObjectId.isValid(ShapeId)
+    if (!ObjectValid) {
       return {
         statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se ha introducido ningún id para busqueda'
+        body: 'MG-010'
       }
     }
-    const response = await findSssirsa(SssirsaId)
+    const response = await findSssirsa(ShapeId)
     if (!response || response.length === 0) {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No se encontro estatus sssirsa con el id especificado'
+        body: 'MG-028'
       }
     }
     return {

@@ -1,7 +1,4 @@
-const mongoose = require('mongoose')
-const SssirsaSchema = require('../../models/Sssirsa')
-var management = mongoose.createConnection(process.env.DB, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
-var Sssirsa = management.model('Sssirsa', SssirsaSchema)
+var Sssirsa = require('../../models/Sssirsa')
 
 async function findSssirsa () {
   return new Promise((resolve, reject) => {
@@ -29,7 +26,7 @@ module.exports.getAll = async (event, context) => {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: 'No hay estados sssirsa en la base de datos'
+        body: 'MG-027'
       }
     }
     return {
